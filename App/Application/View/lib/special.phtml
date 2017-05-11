@@ -1,0 +1,62 @@
+<!DOCTYPE html>
+<html>
+<head>
+<title><?=$special['title']?></title>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<meta name="viewport" content="width=device-width,minimum-scale=1.0,maximum-scale=1.0,user-scalable=no">
+<script type="text/javascript">var cnzz_protocol = (("https:" == document.location.protocol) ? " https://" : " http://");document.write(unescape("%3Cspan style='display:none' id='cnzz_stat_icon_1254030866'%3E%3C/span%3E%3Cscript src='" + cnzz_protocol + "s4.cnzz.com/z_stat.php%3Fid%3D1254030866' type='text/javascript'%3E%3C/script%3E"));
+</script>
+<!--end copy-->
+<link rel="stylesheet" href="http://static1.wukongtv.com/special/zhuanti/css/zhuanti-compress.css">
+<script src="http://static1.wukongtv.com/wukongjs/WukongApi_uglified.js"></script>
+<script src="http://static1.wukongtv.com/special/zhuanti/js/zhuanti-compress.js"></script>
+</head>
+<body>
+    <?=$special['content']?>
+<script>
+var system	=   '';
+var c           =   '';
+var bofangList	=   <?=json_encode($relations)?>;
+var shareTitle	=   '悟空遥控器';
+var shareContent=   '<?=$special['title']?>';
+var param	=   location.search == '' ? '?' : '?'+location.search+'&';
+var shareLink   =   location.href+param+'do=downloadwk';
+var iosHref	=	"wkpush://wukong<?=$special['tpl']?>=";
+var bofangAction=	function(data){
+	WukongApi.<?=$special['tpl']?>(data);
+}
+window.onload = function(){
+system	=	isIos() ? 'ios' : 'android';
+c       = GetRequest().c == undefined ? 'default' : GetRequest().c;
+init();
+bofang();
+share();
+download(GetRequest().do);
+if(GetRequest().do != 'downloadwk'){
+parents(getclass('bofang')[0]).nextSibling.nextSibling.style.display='none';
+}
+WukongApi.ShareShow();
+}
+function parents(obj){
+    if(obj.nodeName != 'DIV' && obj.nodeName != 'P' && obj.nodeName != 'PRE'){
+        return parents(obj.parentNode);
+    }
+    return obj;
+}
+</script>
+<!--end copy-->
+<div id="modal" style="display: none;">
+<a class="timeline" id="timeline">
+<i class="timeline-icon"></i>
+分享到朋友圈
+</a>
+<a class="message" id="message">
+<i class="message-icon"></i>
+发送给朋友
+</a>
+</div>
+<div id="modal-wechat">
+<img src="http://img.wukongtv.com/web/huodong/environment/wx.png">
+</div>
+</body>
+</html>

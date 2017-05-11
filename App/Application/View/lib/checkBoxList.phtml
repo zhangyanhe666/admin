@@ -1,0 +1,13 @@
+<form role="form" class="" action="" id="attach_form" method="post"  style="position: absolute;">
+    <div class="form-group">
+        <label for="name" id="checkboxList" style="font-size: 18px;"><b><?=$checkBoxTitle?>:</b>
+            <input type="checkbox" class="allpp" onclick="admin.checkedboxAll(this)"><a href="javascript:admin.checkboxList_show()" class="btn btn-primary btn-sm showSwitch">展开</a></label>
+        <?=  \Application\Tool\Html::checkBoxList($checkBoxList)?>
+    </div>
+</form>
+<script>
+$(function(){
+    admin.checkedList(<?=isset($checkedList) ? json_encode($checkedList) : '[]'?>);
+})
+
+</script>

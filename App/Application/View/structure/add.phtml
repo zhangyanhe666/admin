@@ -1,0 +1,18 @@
+<?=$this->content?>	
+<div class="container">
+<form role="form" class="" action="" id="album_form" method="post">
+    <div class="form-group"><label for="name">数据库编号</label><input type="text" class="form-control" id="id" <?php echo isset($id) && !empty($id) ? 'readonly' : '';?> name="id" value="<?php echo isset($id) ? $id : '';?>" placeholder=""></div>    
+    <div class="form-group"><label for="name">dsn</label><input type="text" class="form-control" id="dsn" name="dsn" value="<?php echo isset($item['dsn']) ? $item['dsn'] : '';?>" placeholder=""></div>    
+    <div class="form-group"><label for="name">用户名</label><input type="text" class="form-control" id="username" name="username" value="<?php echo isset($item['username']) ? $item['username'] : '';?>" placeholder=""></div>    
+    <div class="form-group"><label for="name">密码</label><input type="text" class="form-control" id="password" name="password" value="<?php echo isset($item['password']) ? $item['password'] : '';?>" placeholder=""></div>
+
+    <input type='hidden' name='referer' value='<?=$this->router()->referer();?>'/>
+  <button type="button" id="submit"  name="submit" class="btn btn-default">Submit</button>
+</form>
+</div>
+<script>
+admin.addUrl =   '<?= isset($submitAction) ? $submitAction : $this->router()->url(array('action'=>'doAdd'));?>';
+$(function(){
+    $("#submit").click(admin.doAdd);    
+})
+</script>

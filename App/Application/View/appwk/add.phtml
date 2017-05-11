@@ -1,0 +1,9 @@
+<?=$this->content;?>
+<script>   
+admin.checkRepateUrl   =   '<?=$this->router()->url(array('action'=>'checkRepate'));?>';
+admin.updateSort    =   '<?=$this->router()->url(array('action'=>'updateSort'));?>';
+//填充当前包名的数据
+admin.fillBaoming();
+admin.synchronousUrl    =   '<?=$this->router()->url(array('action'=>'synchronous'));?>';
+$('input[name$="hot"],input[name$="new"]').each(admin.hotNewRepate);
+</script>

@@ -1,0 +1,50 @@
+<?=$this->content?>	
+<!--// 添加更新缓存部分-->
+<div  style="margin-top:5px;">
+<?=\Application\Tool\Html::Tool();?>    
+    
+</div>
+<!--// 列表部分部分-->
+<style>
+    .table {
+        width:1200px!important;
+        overflow: scroll;
+    }
+    th, td {
+        word-break: break-all;
+    }
+</style>
+<table class="table" style="white-space:nowrap">
+ <tr>
+     <th>数据库编号</th>
+     <th>dsn</th>
+     <th>用户名</th>
+     <th>密码</th>
+    <th>操作</th>	
+ </tr>
+ <?php foreach ($items as $k=>$item) : ?>
+ <tr>
+     <td><?=$k;?></td>
+     <td><?=$item['dsn'];?></td>
+     <td><?=$item['username'];?></td>
+     <td><?=$item['password'];?></td>
+     <td>
+         <?=  \Application\Tool\Html::option($item);?>
+    </td>
+ </tr>
+ <?php endforeach; ?> 
+
+ </table>
+<script>
+var dbKey   =   '';
+function diffDb(t,dbK){
+    if(!dbKey){
+        dbKey   =   dbK;
+        $(t).hide();
+        alert('加入到比对项');
+    }else{
+        window.open('<?=$this->router()->url(array('action'=>'diffdb'))?>?dbkeyA='+dbKey+'&dbkeyB='+dbK);
+    }
+}
+
+</script>

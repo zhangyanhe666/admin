@@ -1,0 +1,16 @@
+<?=$this->content;?>
+<script>
+admin.checkRepateUrl   =   '<?=$this->router()->url(array('action'=>'checkRepate'));?>';
+admin.updateSort    =   '<?=$this->router()->url(array('action'=>'updateSort'));?>';
+$('input[name$="hot"],input[name$="new"]').each(function(){
+    $(this).data('val',$(this).val());
+    $(this).blur(function(){
+        var fieldName   =   $(this).attr('name');
+        var val         =   $(this).val();
+        if(val!='' && val != $(this).data('val')){
+            admin.checkRepate(fieldName,val);
+        }
+    })
+});
+
+</script>

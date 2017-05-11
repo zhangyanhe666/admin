@@ -1,0 +1,30 @@
+<?=$this->content?>
+<!--// 列表部分部分-->
+<style>
+    .table {
+        width:1200px!important;
+        overflow: scroll;
+    }
+    th, td {
+        word-break: break-all;
+    }
+</style>
+<table class="table" style="white-space:nowrap">
+ <tr>
+     <th>表名</th>
+     <th>备注</th>
+     <th>创建时间</th>
+     <th>表编码</th>
+    <th>操作</th>	
+ </tr>
+ <?php foreach ($list as $item) : ?>
+ <tr>
+     <td><?=$item['TABLE_NAME'];?></td>
+     <td><?=$item['TABLE_COMMENT'];?></td>
+     <td><?=$item['CREATE_TIME'];?></td>
+     <td><?=$item['TABLE_COLLATION'];?></td>
+     <td></td>
+ </tr>
+ <?php endforeach; ?> 
+
+ </table>

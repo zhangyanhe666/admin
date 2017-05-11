@@ -1,0 +1,87 @@
+<style>
+    .ddl1{
+        display: block;
+        padding: 2px 3px;
+        background: #f8faff;
+        color: #7c9eb2;
+        width:<?=1600/(count($this->getServer('Tool\Tpl\TplFormat')->getMeans())+2)?>px;
+        float: left;
+        height: 28px;
+    }    
+    .h-height{
+        min-height:65px;
+    }
+</style>
+<script language="javascript" type="text/javascript" src="/assets/js/My97DatePicker/WdatePicker.js"></script>
+
+<script src="/assets/js/jquery.nestable.min.js"></script>
+<div  style="margin-top:5px;">
+<?= \Application\Tool\Html::Tool()?>
+</div>
+<?php if(isset($showtime) && $showtime):?>
+<!--// 列表部分部分-->
+<input type="text" class="form-control" id="video_date" style="width:200px" onclick="WdatePicker({dateFmt:'yyyy-MM-dd HH:mm:ss'})" name="" value="" placeholder="">
+<input type="button" id="videobutton" value='查询'>
+<?php endif;?>
+<div class="overflowx">
+<div class="dd-handle" style="width:1600px;">
+    <?=  array_reduce($this->getServer('Tool\Tpl\TplFormat')->getMeans(), function($v1,$v2){
+        return $v1."<div class=\"ddl1\">{$v2['name']}</div>";
+        })?><div class="ddl1" style="width:150px;">操作</div>
+</div>  
+<div class="dd" >  
+    <ol class="dd-list" style="width:1600px;">  
+    <?php if(count($items)>0): foreach ($items as $view) : ?>
+        <li class="dd-item" data-id="<?=$view['id']?>">
+            <div class="dd-handle h-height">
+                <?=$this->getServer('Tool\Tpl\TplFormat')->index($view,'div','ddl1');?>              
+                <div class="ddl1" style="line-height: 11px;width:150px;">                    
+                <?=\Application\Tool\Html::option($view);?>
+                </div>
+            </div>  
+        </li>  
+     <?php  endforeach;endif; ?>
+    </ol>  
+</div>  
+</div>
+<div id="login">
+    <div id="title" style="cursor:move">
+    <a href="javascript:admin.hideText()">关闭</a></div>
+    <div style='word-break:break-all;'><textarea id="showcom" style='word-break:break-all;width:100%;height: 311px;border:0px;'></textarea></div>
+
+</div>
+<script>
+$(function(){
+admin.editUrl =   '<?=$this->router()->url(array('action'=>'doEdit'),$param);?>';
+admin.deleteUrl =   '<?=$this->router()->url(array('action'=>'delete'),$param);?>';
+<?php if(!empty($param) || Application\Tool\User::userInfo()->username == 'liujunan'):?>
+if(admin.isPc()){
+    $('.dd').nestable({maxDepth:1});
+    $('.dd').on('change', function(e) {  
+        var sort    =   $('.dd').nestable('serialize');
+        $.ajax({
+            url:'<?=$this->router()->url(array('action'=>'sort'),$param)?>',
+            data:{'sort':sort},
+            dataType:'json',
+            type:'POST',
+            success:function(ret){
+                if(ret.status == 'N'){
+                    alert(ret.msg);
+                }
+            }
+        });
+    });  
+    $('.ddl1 a,.lbl,input').on('mousedown', function(e){
+            e.stopPropagation();
+    });
+}
+<?php endif;?>
+$('#videobutton').on('click',function(){
+        var tag     =   window.location.search.indexOf("?") > -1 ? '&' :  '?';  
+        var origin  =   window.location.origin;       
+        var origin  =   window.location.origin;       
+        var search  =   window.location.search.split('&date');
+        window.location.href    =   origin+window.location.pathname+search[0]+tag+'date='+$('#video_date').val();
+})
+})
+</script>

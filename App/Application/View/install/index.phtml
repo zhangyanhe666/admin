@@ -1,0 +1,95 @@
+<style>
+.install-container {
+    width: 405px;
+    margin: 0 auto;
+}
+</style>
+<div class="main-container">
+    <div class="main-content">
+        <div class="row">
+            <div class="col-sm-10 col-sm-offset-1">
+                <div class="install-container">
+                    <div class="center">
+                        <h1><span class="white">后台管理系统</span></h1>
+                                <h4 class="blue"></h4>
+                    </div>
+
+                    <div class="space-6"></div>
+                    <div class="position-relative">
+                        <div id="login-box" class="login-box visible widget-box no-border">
+                            <div class="widget-body">
+                                <div class="widget-main">
+                                    <h4 class="header blue lighter bigger"><i class="icon-coffee green"></i> 请填写配置信息</h4>
+                                    <div class="space-6"></div>
+                                    <form id="dbform" >
+                                        <fieldset>
+                                            <label class="block clearfix"> 
+                                                <span	class="block input-icon input-icon-right">
+                                                    dsn备注：mysql:dbname=%s;host=localhost:3306
+                                                </span>
+                                            </label>
+                                            <label class="block clearfix"> 
+                                                <span	class="block input-icon input-icon-right">
+                                                    <input	type="text" class="form-control loginno" placeholder="dsn" name="dsn"> 
+                                                </span>
+                                            </label>
+                                            <label class="block clearfix"> 
+                                                <span	class="block input-icon input-icon-right">
+                                                    <input	type="text" class="form-control loginno" placeholder="用户名" name="username"> 
+                                                </span>
+                                            </label>
+                                            <label class="block clearfix">
+                                                <span class="block input-icon input-icon-right"> 
+                                                    <input	type="text" class="form-control loginpass" placeholder="密码" name="password">
+                                                </span>
+                                            </label>
+                                            <label class="block clearfix">
+                                                <span class="block input-icon input-icon-right"> 
+                                                    <input	type="text" class="form-control loginpass" placeholder="数据库名称" name="dbname">
+                                                </span>
+                                            </label>
+                                            <div class="space"></div>                                           
+                                            <div class="clearfix">
+                                                <button type="button"	class="width-35 pull-right btn btn-sm btn-primary" id="submit"> 
+                                                    <i class="icon-key"></i> 完成
+                                                </button>
+                                            </div>
+
+                                            <div class="space-4"></div>
+                                        </fieldset>
+                                    </form>
+                                </div>
+                                                                                                                                                                                                                                            <!-- /widget-main -->
+                            </div>
+                                                                                                                                                                                                            <!-- /widget-body -->
+                        </div>
+                                                                                                                                                                        <!-- /login-box -->
+                    </div>
+                                                                                                                                        <!-- /position-relative -->
+                </div>
+            </div>
+                                                                                <!-- /.col -->
+        </div>
+                                                <!-- /.row -->
+    </div>
+</div>
+<!-- /.main-container -->
+<script type="text/javascript">
+$(function(){
+    $('#submit').click(function(){
+        $.ajax({
+            url:'<?=$this->router()->url(array('action'=>'installdb'))?>',
+            data:$('#dbform').serialize(),
+            type:'post',
+            success:function(res){
+                var data    =   eval("("+res+")");
+                if(data.status == 'N'){
+                    alert(data.msg);
+                }else{
+                    location.href    =   "<?=$this->router()->url(\Library\Application\Common::$login)?>";
+                }
+            }
+        });
+    });
+})
+</script>

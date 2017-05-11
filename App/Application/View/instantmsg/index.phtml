@@ -1,0 +1,19 @@
+<!--// 列表部分部分-->
+<?=$this->getServer('Tool\Tpl\TplFormat')->toolButton(array('add'))?>
+<a class="btn btn-primary btn-sm" onclick="javascript:void(0);" href="<?=$this->router()->url(array('action'=>'delete'))?>">删除</a>
+<table class="table" style="white-space:nowrap">
+ <tr>
+     <th>关键词</th>
+ </tr>
+ 
+ <?php if(count($items['DirtyWordsList'])>0):foreach ($items['DirtyWordsList'] as $v):?>
+ <tr>
+     <td><?=$v?></td>
+ </tr>
+ <?php endforeach;endif; ?> 
+ </table>
+<?php  if(count($items['DirtyWordsList'])==0):?>
+ <div style="margin-top:-20px;" class="alert alert-warning ">
+      <strong>没有任何数据!</strong> 对不起系统没有查询到任何有关记录
+   </div>
+<?php endif;?>

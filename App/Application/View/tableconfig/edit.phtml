@@ -1,0 +1,390 @@
+
+<link rel="stylesheet" href="/assets/css/ui.jqgrid.css">
+<div class="">
+<div for="name"  style="color: red;font-size: 18px;">
+    <b><?=$this->getRequest()->getQuery('msg')?></b> 
+</div> 
+<label for="name"  style="font-size: 18px;">
+    <b>列信息</b> 
+</label> 
+<form role="form" class="" action="" id="album_form" method="post">
+<table class="table" style="white-space:nowrap">
+    <tr><td colspan="6">内部支持的数据类型：
+id类型，password密码类型，interLink内链接类型，outLink外链接类型，img图片类型，text类型，hidden隐藏类型，float类型，int类型，tinyint类型,createtime创建时间，updatetime更新时间</td></tr>
+    <tr class="db_title">
+        <th width='10px'>字段名</th>
+        <th width='20px'>字段类型</th>
+        <th width='25px'>字段说明</th>        
+        <th width='25px'>显示方式</th>
+        <th width='50px'>类型规则</th>
+        <th width='50px'>默认值</th>
+        <th>允许为空</th>
+        <th>显示排序</th>
+        <th width='25%'></th>
+    </tr>
+        <?php $counter=0;foreach($tableConfig->getColumnList()->toArray() as $v):?>
+    <tr id="columnInfo_<?=$v['name']?>">  
+            <td><span><?=$v['name']?></span></td>
+            <td><span><?=$v['type']?>(<?=$v['size']?>)</span></td>
+            <td><input type="text" name="columnList[<?=$v['name']?>][comment]" size="13" value="<?=$v['comment']?>"></td>            
+            <td><select class="column_select" name="columnList[<?=$v['name']?>][viewType]">
+                    <?=Library\Application\Common::option($typeRemark, $v['viewType'],array('val'=>'val'))?>
+                </select></td>            
+            <td><input type="text" name="columnList[<?=$v['name']?>][param]" size="100" value="<?=$v['param']?>"></td>
+            <td><input type="text" name="columnList[<?=$v['name']?>][default]" size="13" value="<?=$v['default']?>"></td>
+            <td><?= $v['isNull'] ? '<span>是</span>' : '<span style="color:red">否</span>'?></td>
+            <td><input type="text" name="columnList[<?=$v['name']?>][sort]" size="5" value="<?=$counter;?>"></td>
+            <td><?=\Application\Tool\Html::button(array('onclick'=>"showConstraint('{$v['name']}')"), '增加外键约束')?></td>
+            <input type='hidden' name='columnList[<?=$v['name']?>][name]' value='<?=$v['name']?>'/>
+            <input type='hidden' name='columnList[<?=$v['name']?>][type]' value='<?=$v['type']?>'/>
+            <input type='hidden' name='columnList[<?=$v['name']?>][size]' value='<?=$v['size']?>'/>
+            <input type='hidden' name='columnList[<?=$v['name']?>][isNull]' value='<?=$v['isNull']?>'/>
+            <input type='hidden' name='columnList[<?=$v['name']?>][columnKey]' value='<?=$v['columnKey']?>'/>
+            <input type='hidden' name='columnList[<?=$v['name']?>][charset]' value='<?=$v['charset']?>'/>
+            <input type='hidden' name='columnList[<?=$v['name']?>][columnType]' value='<?=$v['columnType']?>'/>
+    </tr>
+    <?php $counter++;?>
+    <?php endforeach;?>
+    <?=$linkColumns;?>
+    <tr id="add-show-field" style="display:none;">
+        <td colspan="9"><?=\Application\Tool\Html::button(array('onclick'=>"addShowField()"), '增加展示字段')?></td>
+    </tr>
+    <tr>
+        <td>设置默认排序:</td>
+        <td colspan="8">
+            <select class="column_select" name="orderColumn">
+                <?=Library\Application\Common::option($tableConfig->getColumnList()->toArray(), $tableConfig->getCustomConfig()->orderColumn,array('key'=>'name','val'=>'comment'))?>
+            </select>
+            <select class="column_select" name="orderSort">
+                <?=Library\Application\Common::option(array('desc'=>'从大到小排序','asc'=>'从小到大排序'), $tableConfig->getCustomConfig()->orderSort)?>
+            </select>
+        </td>
+    </tr>
+    <tr>
+        <td>dispatchmap配置:</td>
+        <td colspan="8"><input type='text' name='dispatchmap' size="150" value="<?=$tableConfig->getCustomConfig()->dispatchmap?>" placeholder="column=本表关联字段 map=m<table:映射表名,selfId:本表id,listId:关联表id list=m<table:关联表名,id:表id,name:名称显示 title=显示标题"></td>
+    </tr>
+        <input type='hidden' name='referer' value='<?=$this->router()->referer();?>'/>
+        <input type='hidden' name='menuId' value='<?=$this->getRequest()->getQuery('menuId')?>'/>
+ </table>
+
+</form>
+    <button type="button" id="submit"  name="submit" class="btn btn-default">保存列信息</button>
+    <div class="space-18"></div>
+</div>  
+
+<!--约束信息-->
+<div>
+    <label for="name"  style="font-size: 18px;">
+        <b>约束信息</b>  
+     </label>       
+    <table  class="table" id="constraintList" style="white-space:nowrap">
+        <tr>
+            <th width='10px'>键名</th>
+            <th width='10px'>字段名</th>
+            <th width='10px'>外链数据库名</th>
+            <th width='10px'>外链表名</th>
+            <th width='10px'>外链字段</th>
+            <th width='10px'>操作</th>
+        </tr>
+        <?php foreach ($tableConfig->getIndexKeyList()->toArray() as $v):?>
+        <tr>
+            <td><?=$v['keyName']?></td>
+            <td><?=$v['column']?></td>
+            <td><?=$v['linkDb']?></td>
+            <td><?=$v['linkTable']?></td>
+            <td><?=$v['linkColumn']?></td>
+            <td><?php if($v['keyName'] == 'custom'):?>
+                <?=\Application\Tool\Html::button(array('onclick'=>"delConstraint(this,'{$v['column']}')"), '删除')?><?php endif;?></td>
+        </tr>
+        <?php endforeach;?>
+    </table>
+        <div class="space-18"></div>
+    <div class="space-18"></div>
+</div>
+
+<!--表信息-->
+<div>
+    <label for="name"  style="font-size: 18px;">
+        <b>表信息</b>  
+     </label>       
+    <table class="table" style="white-space:nowrap">
+        <tr>
+            <th width='10px'>属性</th>
+            <th width='10px'>值</th>
+        </tr>
+        <?php foreach ($tableConfig->getTableInfo()->toArray() as $k=>$v):?>
+        <tr>
+            <td><?=$k?></td>
+            <td><?=$v?></td>
+        </tr>
+        <?php endforeach;?>
+    </table>
+        <div class="space-18"></div>
+    <div class="space-18"></div>
+</div>
+<script>
+$('select[name="orderColumn"]').chosen();
+var viewArr =   <?=json_encode($typeRemark)?>;
+$(function(){
+    //初始化提示信息
+    $('.column_select').change(function(){
+        $(this).parent().next().find('input').attr('placeholder',viewArr[$(this).val()]['placeholder']);
+    });
+    //初始化关闭按钮
+    $('.ui-jqdialog-titlebar-close').click(function(){
+            $('.ui-widget-content').hide();
+            $('#over').hide();
+            $('#fieldName').val('');
+    });
+    //切换表事件
+    $('#tblist').change(function(){
+        setColumnOption();
+    });
+    //提交表数据
+    $("#submit").click(function(){
+        var url         =   "<?=$this->router()->url(array('action'=>'doEdit'), $uriParam)?>";  
+        $.ajax({
+            cache:true,
+            type:"POST",
+            url :url,
+            data:$("#album_form").serialize(),
+            async:false,
+            error:function(request){
+                alert('添加失败');
+            },
+            success:function(data){
+                admin.hideLoading();
+                var data    =   eval("("+data+")");
+               if(data.status == 'Y'){
+                   alert('保存成功');
+               }else{
+                   alert(data.msg);
+               }
+            },
+            beforeSend:function(){
+                admin.loading();
+            }
+        })
+    });
+    //判断是否会存在外部字段
+    <?php if($tableConfig->getLinkTables()->count() > 0):?>
+    $('#add-show-field').show();
+    <?php endif;?>
+});
+//显示增加外键约束框
+function showConstraint(column){
+     $('.ui-widget-content').show();
+     $('#over').show();
+     resetTbList('getAllTable');
+     $('#fieldName').val(column);
+     $('.EditButton').html('<?=\Application\Tool\Html::button(array('onclick'=>"doAddConstraint()"), '添加自定义外键')?>');
+}
+//重置表列表
+function resetTbList(action){
+     var url         =   "<?=$this->router()->url(array('action'=>'"+action+"'), $uriParam)?>";
+     $.ajax({
+        url:url,
+        async:false,
+        success:function(data){
+            var res    =   eval("("+data+")");                
+            if(res.status=='Y'){
+                $('#tblist').html(res.data);
+            }else{
+                alert(res.msg);
+            }
+        }
+    });    
+    setColumnOption();
+}
+//设置列信息
+function setColumnOption(){
+    var tablename   =   realTable();
+    var data        =   $('#columnList').data(tablename)
+    if(data != undefined){
+        $('#columnList').html(data);
+        return ;
+    }
+    var url         =   "<?=$this->router()->url(array('action'=>'tableColumns'),$uriParam)?>&tablename="+tablename;
+    $.ajax({
+        url:url,
+        success:function(data){
+            admin.hideLoading();
+            var res    =   eval("("+data+")");
+            if(res.status=='Y'){
+                $('#FormError').hide();
+                $('#columnList').html(res.data);
+                $('#columnList').data(tablename,res.data);
+            }else{
+                $('#FormError').show();
+                $('#FormError > td').html('未获取到字段信息'+res.msg);
+            }
+        },
+        beforeSend:function(){
+            admin.loading();
+        }
+    })
+}
+//添加约束
+function doAddConstraint(){
+        var url         =   "<?=$this->router()->url(array('action'=>'addConstraint'), $uriParam)?>";        
+        var del         =   '<?=\Application\Tool\Html::button(array('onclick'=>"delConstraint(this,_fieldName)"), '删除')?>';
+        $.ajax({
+            url:url,
+            type:'POST',
+            data:$("#addkeyForm").serialize(),
+            success:function(data){
+                admin.hideLoading();
+                var res    =   eval("("+data+")");
+                if(res.status=='Y'){
+                    $('.ui-jqdialog-titlebar-close').click();
+                    var tr      =   '<tr>\
+                                        <td>'+res.data.keyName+'</td>\
+                                        <td>'+res.data.column+'</td>\
+                                        <td>'+res.data.linkDb+'</td>\
+                                        <td>'+res.data.linkTable+'</td>\
+                                        <td>'+res.data.linkColumn+'</td>\
+                                        <td>'+del.replace(/\_fieldName/,'\''+res.data.column+'\'')+'</td>\
+                                    </tr>';
+                   $('#columnInfo_'+res.data.column+' > td > a').last().remove();
+                   $('#constraintList').append(tr);
+                   $('#FormError').hide();
+                   $('#add-show-field').show();
+                   $('input["name=columnList['+$('#fieldName').val()+'][columnType]"]').val('custom');
+                }else{
+                    $('#FormError').show();
+                    $('#FormError > td').html('添加失败：'+res.msg);
+                }
+            },
+            beforeSend:function(){
+                admin.loading();
+            }
+        })
+}
+//删除约束
+function delConstraint(t,column){
+    if(!confirm('确认删除自定义外键“'+column+'”吗')){
+        return false;
+    }
+     var url         =   "<?=$this->router()->url(array('action'=>'delConstrain'), $uriParam)?>&column="+column;
+     $.ajax({
+        url:url,
+        success:function(data){
+            admin.hideLoading();
+            var res    =   eval("("+data+")");                
+            if(res.status=='Y'){
+                $(t).parent().parent().remove();
+                var add         =   '<?=\Application\Tool\Html::button(array('onclick'=>"showConstraint(_fieldName)"), '增加外键约束')?>';
+                $('#columnInfo_'+column+' > td').last().html(add.replace(/\_fieldName/,'\''+column+'\''));
+                if(res.data.linkstatus == 'N'){
+                    $('#add-show-field').hide();
+                }
+            }else{
+                alert(res.msg);
+            }
+        },
+        beforeSend:function(){
+            admin.loading();
+        }
+    })
+}
+
+function addShowField(){
+    $('.ui-widget-content').show();
+    $('#over').show();
+    resetTbList('getLinkTable');
+    $('.EditButton').html('<?=\Application\Tool\Html::button(array('onclick'=>"doAddShowField()"), '增加展示字段')?>');
+}
+function realTable(){    
+    var  linkTable  =   $('#tblist').val().split('-');
+    return linkTable.length > 1 ? linkTable[1] : linkTable[0];
+}
+function doAddShowField(){
+        var url         =   "<?=$this->router()->url(array('action'=>'addShowField'),$uriParam)?>";
+        $.ajax({
+            url:url,
+            type:'POST',
+            data:$("#addkeyForm").serialize(),
+            success:function(data){
+                admin.hideLoading();
+                var res    =   eval("("+data+")");                
+                if(res.status=='Y'){
+                    $('#FormError').hide();
+                    $('.ui-jqdialog-titlebar-close').click();
+                   $('#add-show-field').before(res.data);
+                }else{
+                    $('#FormError').show();
+                    $('#FormError > td').html('添加失败：'+res.msg);
+                }
+            },
+            beforeSend:function(){
+                admin.loading();
+            }
+        })
+}
+
+function delShowField(t,column){
+    if(!confirm('确认删除外部字段“'+column+'”吗')){
+        return false;
+    }
+     var url         =   "<?=$this->router()->url(array('action'=>'delShowField'), $uriParam)?>&column="+column;
+     $.ajax({
+        url:url,
+        success:function(data){
+            admin.hideLoading();
+            var res    =   eval("("+data+")");                
+            if(res.status=='Y'){
+                $(t).parent().parent().remove();
+            }else{
+                alert(res.msg);
+            }
+        },
+        beforeSend:function(){
+            admin.loading();
+        }
+    })
+}
+
+
+</script>
+<div class="ui-widget ui-widget-content ui-corner-all ui-jqdialog jqmID2" id="editmodgrid-table" dir="ltr" tabindex="-1" role="dialog" aria-labelledby="edithdgrid-table" aria-hidden="false" style="width: 700px; height: auto; z-index: 1050; overflow: hidden; top: 101px; left: 585px; display: none;">
+            <div class="ui-jqdialog-titlebar ui-widget-header ui-corner-all ui-helper-clearfix" id="edithdgrid-table" style="cursor: move;">
+                <div class="widget-header">
+                    <span class="ui-jqdialog-title" style="float: left;">增加外键</span>
+                    <a href="javascript:void(0)" class="ui-jqdialog-titlebar-close ui-corner-all" style="right: 0.3em;">
+                        <span class="ui-icon ui-icon-closethick"></span></a>
+                </div>
+            </div>
+            <div class="ui-jqdialog-content ui-widget-content" id="editcntgrid-table">
+                    <form name="FormPost" id="addkeyForm" class="FormGrid" onsubmit="return false;" >
+                        <table id="TblGrid_grid-table" class="EditTable" cellspacing="0" cellpadding="0" border="0">
+                            <tr id="FormError" style="display:none">
+                                <td class="ui-state-error" colspan="2"></td>
+                            </tr>
+                            <tr rowpos="5" class="FormData" id="tr_ship">
+                                <td class="CaptionTD">表</td>
+                                <td class="DataTD">
+                                    &nbsp;<select role="select" id='tblist'  name="linkTable" size="1" class="FormElement ui-widget-content ui-corner-all">
+                                    </select>
+                                </td>
+                            </tr>
+                            <tr rowpos="5" class="FormData" id="tr_ship">
+                                <td class="CaptionTD">列</td>
+                                <td class="DataTD">
+                                    &nbsp;<select role="select" id="columnList" name="linkColumn" size="1" class="FormElement ui-widget-content ui-corner-all">                                        
+                                    </select>
+                                </td>
+                            </tr>       
+                         <tr><td colspan="2"><hr class="ui-widget-content" style="margin:1px"></td></tr>
+                        <tr id="Act_Buttons">
+                            <td>
+                                <input type="hidden" id='fieldName' name='column' value="" />
+                            </td>
+                            <td class="EditButton">
+                                <a href="javascript:void(0)" id="addkeysubmit" class="btn btn-sm btn-primary">添加自定义外键</a>
+                            </td>
+                        </tr>     
+                        </table>
+                    </form>
+            </div>        
+</div>

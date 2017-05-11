@@ -1,0 +1,110 @@
+<?php if(!empty($items->page)):?>
+<?php if ($items->page->totalPage): ?>
+<div class="text-center" style=""> 
+<ul class="pagination" >
+<!-- index page link -->
+<?php if ($items->page->current != 1): ?>
+ <li>
+     <a href="<?=$this->router()->url(array(),array('page'=>1),true)?>">
+首页
+ </a>
+</li>
+<?php else: ?>
+
+<li class="disabled">
+<a href="#">
+首页
+</a>
+</li>
+<?php endif; ?>
+<!-- Previous page link -->
+<?php if (!empty($items->page->prev)): ?>
+ <li>
+<a href="<?=$this->router()->url(array(),array('page'=>$items->page->prev),true)?>">
+&laquo;
+ </a>
+</li>
+<?php else: ?>
+
+<li class="disabled">
+<a href="#">
+&laquo;
+</a>
+</li>
+<?php endif; ?>
+
+<!-- Numbered page links -->
+<?php foreach ($items->page->pagesInRange as $page): ?>
+
+<?php 
+
+if ($page != $items->page->current): ?>
+	<li>
+<a href="<?=$this->router()->url(array(),array('page'=>$page),true)?>">
+<?php echo $page; ?>
+</a>
+</li>
+<?php else: ?>
+<li class="active">
+<a href="#"><?php echo $page; ?></a>
+</li>
+
+
+
+<?php endif;?>
+<?php endforeach; ?>
+
+<!-- Next page link -->
+<?php if (isset($items->page->next)): ?>
+<li>
+<a href="<?=$this->router()->url(array(),array('page'=>$items->page->next),true)?>">
+&raquo;
+</a>
+</li>
+
+<?php else: ?>
+<li class="disabled">
+<a href="#">
+&raquo;
+</a>
+ </li>
+
+ <?php endif; ?>
+<!-- end page link -->
+<?php if ($items->page->totalPage != $items->page->current): ?>
+ <li>
+<a href="<?=$this->router()->url(array(),array('page'=>$items->page->totalPage),true)?>">
+尾页
+ </a>
+</li>
+<?php else: ?>
+
+<li class="disabled">
+<a href="#">
+尾页
+</a>
+</li>
+<?php endif; ?>
+<li class="disabled">
+<font color="#00ccff">总页数（<?=$items->page->totalPage?>页）总记录数：（<?=$items->page->count;?>条）</font>
+</li>
+ </ul>
+ </div>
+ <?php else: ?>
+<div style="margin-top:-20px;" class="alert alert-warning " >
+      <strong>没有任何数据!</strong> 对不起系统没有查询到任何有关记录
+   </div>
+
+ <?php endif; ?>
+
+ <div style="margin-top:-20px;" class="alert" >
+    <strong>运行时间：</strong>    <br/>
+    <?php foreach (Library\Application\Common::getTimeAnchor() as $k=>$v):?>
+    <?=$k?>:(
+    <?php foreach ($v as $vk=>$vv):?>
+    <?=$vk?>:<?=$vv?>
+    <?php endforeach;?>)
+    <br/>
+    <?php endforeach;?>
+ </div>
+<?php endif;?>

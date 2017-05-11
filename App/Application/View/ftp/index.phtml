@@ -1,0 +1,339 @@
+<script type="text/javascript" src="/assets/js/jquery-form.js"></script> 
+<script type="text/javascript" src="/assets/js/dmuploader.min.js"></script> 
+<table class="table" style="white-space:nowrap">
+  <tr>
+      <td colspan="2">当前服务器：<select id='servers'><?=\Library\Application\Common::option($servers,$this->getRequest()->getQuery('server',1))?></server>
+    </td>		
+ </tr>
+<tr>
+    <td colspan="2">当前位置：<?=$ftp->config()->path?></td>		
+ </tr>
+<tr>
+    <td> 
+         <form id="imgform" style='display: none;'  action="" method="post" enctype="multipart/form-data">
+             <input id='fileimage' type="file" name="file" />
+             <input  type="hidden" name="dir" value=""/>
+         </form>
+    </td><td colspan="2">更新cdn链接：<input type="text" size="55" id="cdnUrl">
+        <a href="javascript:updateUrlCdn($('#cdnUrl').val());" class="btn btn-primary btn-sm">更新</a></td>		
+ </tr>
+ </table>
+<style>
+    .file-progress{
+        width:300px;
+        left:400px;
+        z-index: 200;
+        display: none;
+    }
+</style>
+<div class="progress file-progress" data-percent="0%">
+        <div class="progress-bar" style="width:0%;"></div>
+</div>
+<div class="widget-box col-sm-8" style="border:1px solid  #2e8965">
+    <div class="widget-header header-color-green2">
+            <h4 class="lighter smaller">文件管理</h4>
+    </div>
+    <div class="widget-body ">
+            <div class="widget-main padding-8" style="float: left;width:50%">
+                    <div id="tree" class="tree"></div>
+            </div>
+        <div class=" widget-main body-image" style="float: left;width:50%">
+
+        </div>
+    </div>
+
+</div>
+
+<script src="/assets/js/fuelux/fuelux.tree.min.js"></script>
+<script>
+    
+dmUploaderConfig    =   function(dir,t){
+    var config  =  {
+        url: '<?=$this->router()->url(array('action'=>'uplodeimage'),array('server'=>$this->getRequest()->getQuery('server',1)))?>&dir='+dir,
+        dataType: 'json',
+        onBeforeUpload: function(id){
+            $('.tree-folder-header').css('background-color','');
+            $('#over').show();
+            $('.file-progress').show();
+            $('.file-progress').attr('data-percent','0%');
+            $('.file-progress > div').attr('width','0%');
+        },
+        onUploadProgress: function(id, percent){
+            var p   =   percent+'%';
+            $('.file-progress').attr('data-percent',p);
+            $('.file-progress > .progress-bar').width(p);
+        },
+        onUploadSuccess: function(id, data){
+            $('#over').hide();                
+            $('.file-progress').hide();
+            if(data.status =='Y'){
+                t.parent().children('.tree-folder-content').children().remove();
+                if(t.children('i').attr('class')=='ace-icon red icon-folder-open'){
+                    t.click().click();
+                }else{
+                    t.click()
+                }
+                t.parent().children('.tree-folder-content').show();
+            }else{
+                alert(data.msg);
+            }            
+        },
+        onUploadError: function(id, message){
+            alert(message);
+        },
+    }
+    return config;
+}
+// -- Disable Document D&D events to prevent opening the file on browser when we drop them
+$(document).on('dragenter', function (e) { e.stopPropagation(); e.preventDefault(); });
+$(document).on('dragover', function (e) { e.stopPropagation(); e.preventDefault(); });
+/*$(document).dmUploader(dmUploaderConfig('.'),function(){})*/
+
+var remoteDateSource = function() {
+    	this._data  = '';
+	this._delay = '';
+}
+remoteDateSource.prototype.data = function (options, callback) {  
+     var dir = null  
+     if ( !('text' in options || 'type' in options) ){  
+        dir = '.';
+    }  
+     else if ('type' in options && options['type' ] == 'folder' ) { //it has children  
+             dir = options.dir;
+    }
+    $.ajax({  
+         url: '<?=$this->router()->url(array('action'=>'fileList'),array('server'=>$this->getRequest()->getQuery('server',1)))?>',  
+         data: 'dir='+dir,
+         type: 'GET' ,  
+         dataType: 'json' ,  
+         success : function (response) { 
+             if(response.status == 'N'){
+                 alert(response.msg);
+                 $('[dir="'+dir+'"]').click();
+                 callback({ data: []})  
+             }else{
+                 callback({ data: response.data }) 
+                 $('.tree-folder-header').each(function(){
+                    $(this).on('dragleave', function (e) {                        
+                       $('.tree-folder-header').css('background-color','');
+                    });
+                    $(this).on('dragover', function (e) {
+                       $(this).css('background-color','#0ff');
+                    });
+                    $(this).dmUploader(dmUploaderConfig($(this).children('div').children('span').attr('dir'),$(this)));
+                })
+             }
+         },  
+         error: function (response) {
+            $('[dir="'+dir+'"]').click();
+            callback({ data: []})
+         }        
+    })      
+}     
+var dateSource = new remoteDateSource();
+
+$(function(){
+
+    $('#servers').change(function(){
+        window.location.href    =   '<?=$this->router()->url()?>?server='+$(this).val();
+    });
+    $('#tree').ace_tree({
+            dataSource: dateSource ,
+            loadingHTML:'<div class="tree-loading"><i class="icon-refresh icon-spin blue"></i></div>',
+            'open-icon' : 'icon-folder-open',
+            'close-icon' : 'icon-folder-close',
+            'selectable' : false,
+            'selected-icon' : null,
+            'unselected-icon' : null
+    });
+    $('body').on('click','.tree-folder-header',function(){        
+        $('.body-image').html('');
+        var tool    =   '<span class="tree-tool"><button class="icon-refresh " onclick="updateCdn(this)" style="margin-left:7px;"></button>\
+                         <button class="icon-cloud-upload " onclick="upload(this)" style="margin-left:7px;"></button>\
+                        <button class="icon-trash " onclick="del(this)" style="margin-left:7px;"></button>\
+                        <button class="icon-edit " onclick="mkdir(this)" style="margin-left:7px;"></button></span>';
+        treeTool(this,tool);
+    });
+    $('body').on('click','.tree-item',function(){
+        $('.body-image').html('');
+        var imgSrc    =   '<?=$ftp->config()->url?>'+$(this).children('.tree-item-name').children('span').attr('dir').substring(2);
+        var tool    =   '<span class="tree-tool"><button class="icon-refresh " onclick="updateCdn(this)" style="margin-left:7px;"></button>\
+                         <button class="icon-search" onclick="window.open(\''+imgSrc+'\')" style="margin-left:7px;"></button>\
+                        <button class="icon-download-alt " onclick="down(this)" style="margin-left:7px;transform:rotate(0deg);"></button>\
+                        <button class="icon-trash " onclick="del(this)" style="margin-left:7px;"></button></span>';
+        treeTool(this,tool);
+        if($(this).children('.tree-item-name').children('span').attr('type') == 'image'){
+            $('.body-image').append('<input style="margin: 0px; width: 528px;" value="'+imgSrc+'"/><img src="'+imgSrc+'" style="max-width:100%">');
+            $('.body-image').children('input').select();
+        }
+        if($(this).children('.tree-item-name').children('span').attr('type') == 'txt'){
+            var url     =   "<?=$this->router()->url(array('action'=>'showTxt'),array('server'=>$this->getRequest()->getQuery('server',1)));?>";
+            $.ajax({
+                type:'GET',
+                url:url,
+                data:'filePath='+$(this).children('.tree-item-name').children('span').attr('dir'),
+                success:function(data){
+                    var res =   eval('('+data+')');
+                    $('.body-image').append('<input style="margin: 0px; width: 528px;" value="'+res.data.url+'"/><textarea style="margin: 0px; height: 867px; width: 505px;">'+res.data.content+'</textarea>');
+                    $('.body-image').children('input').select();
+                }
+            });
+        }
+        
+    });
+});
+
+function treeTool(t,tool){
+    $('.tree-tool').prev().css('display','block');
+    $('.tree-tool').remove();
+    $(t).css('display','inline');
+    $(t).after(tool);
+}
+function upload(t){
+    $('#fileimage').val('');
+    $('#fileimage').click();
+    var baseaction      =   "<?=$this->router()->url(array('action'=>'uplodeimage'),array('server'=>$this->getRequest()->getQuery('server',1)))?>";
+    $('#fileimage').change(function(){
+        if($(this).val()==''){
+            return false;
+        }        
+        var dir     =   getPath(t,'POST');
+        if(!dir){
+            return false;
+        }
+        var action =   baseaction+'&dir='+dir;
+        $('#imgform').attr('action',action);
+        $("#imgform").ajaxSubmit({ 
+            beforeSend:function(){
+                $('#over').show();
+                $('.file-progress').show();
+                $('.file-progress').attr('data-percent','0%');
+                $('.file-progress > div').attr('width','0%');
+            },
+            uploadProgress:function(event,position, total, percent){
+                var p   =   percent+'%';
+                $('.file-progress').attr('data-percent',p);
+                $('.file-progress > .progress-bar').width(p);
+            },
+            dataType:  'json', //数据格式为json 
+            success: function(data) {     
+                $('#over').hide();                
+                $('.file-progress').hide();
+                if(data.status=='Y'){
+                    reloadDir($(t));
+                }else{
+                    alert(data.msg);
+                }
+            }
+        });
+    });
+}
+
+
+function updateCdn(t){
+    var filePath    =   typeof t != "object"? t : getPath(t,'GET');
+    var type        =   typeof t != "object"? 'image' : getType(t);
+    var url     =   "<?=$this->router()->url(array('action'=>'updateCdn'),array('server'=>$this->getRequest()->getQuery('server',1)));?>";
+    $.ajax({
+        type:'GET',
+        url:url,
+        data:'filePath='+filePath+'&type='+type,
+        success:function(data){
+            var res =   eval('('+data+')');
+            if(res.status   == 'Y'){
+                alert('更新成功，点击图片可查看当前图片信息');
+            }else{
+                alert(res.msg);
+            }
+        }
+    });
+    return false;
+}
+function updateUrlCdn(u){
+    var url =   "<?=$this->router()->url(array('action'=>'updateUrlCdn'));?>";
+    $.ajax({
+        type:'GET',
+        url:url,
+        data:'url='+u,
+        success:function(ret){
+            var ret =   eval('('+ret+')');
+            if(ret.status == 'Y'){
+                alert('更新成功，点击图片可查看当前图片信息');
+            }else{
+                alert(ret.msg);
+            }
+        }
+    })
+}
+function mkdir(t){
+    var name = prompt("文件夹名称", "");
+    if(name == null){
+        return ;
+    }
+    $.ajax({
+        type:'POST',
+        url:'<?=$this->router()->url(array('action'=>'ftpmkdir'),array('server'=>$this->getRequest()->getQuery('server',1)))?>',
+        data:'dir='+getPath(t,'POST')+'&dirname='+name,
+        success:function(data){
+            var res =   eval('('+data+')');
+            if(res.status=='Y'){
+                reloadDir($(t));
+            }else{
+                alert(res.msg);
+            }
+        }
+    });
+    return false;
+}
+
+function del(t){
+    var filename    =   getPath(t,'GET');
+    if(!confirm('你确定要删除'+filename+'吗')){
+        return false;
+    }
+    $.ajax({
+        type:'GET',
+        url:'<?=$this->router()->url(array('action'=>'delete'),array('server'=>$this->getRequest()->getQuery('server',1)))?>',
+        data:'dir='+filename+'&type='+getType(t),
+        success:function(data){
+            var res =   eval('('+data+')');
+            if(res.status=='Y'){
+                reloadDir($(t).parent().parent());
+            }else{
+                alert(res.msg);
+            }
+        }
+    });
+    return false;
+}
+function down(t){
+    location.href   =   '<?=$this->router()->url(array('action'=>'down'),array('server'=>$this->getRequest()->getQuery('server',1)))?>&dir='+getPath(t,'GET')+'&code='+getPath(t,'GET','code');
+}
+function reloadDir(obj){
+    var folder  =   getFolder(obj);
+    var content =   folder.children('.tree-folder-content');
+    var header  =   folder.children('.tree-folder-header');
+    content.children().remove();
+    header.click().click();
+    content.show();
+}
+function getFolder(obj){
+    if(obj.parent().attr('class') != 'tree-folder'){
+        return getFolder(obj.parent());
+    }
+    return obj.parent();
+}
+function getPath(t,type,attr){
+    if(!attr){
+        attr    =   'dir';
+    }
+    if(type == 'GET'){
+        return encodeURIComponent($(t).parent().prev().children('div').children('span').attr(attr));
+    }else{
+        return $(t).parent().prev().children('div').children('span').attr(attr);
+    }
+}
+function getType(t){
+    return $(t).parent().prev().children('div').children('span').attr('type');
+}
+</script>

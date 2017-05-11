@@ -1,0 +1,150 @@
+.overflowx{
+    overflow-x:scroll;
+}
+th, td {
+    word-break: break-all;
+}
+.btn-sm{
+    border-width: 4px;
+    font-size: 13px;
+    margin: 1px 5px;
+    line-height: 1.39;
+}
+#login
+{
+    display:none;
+    border:10px solid #b7c6cc;
+    height:350px;
+    width:50%;
+    position:absolute;/*让节点脱离文档流,我的理解就是,从页面上浮出来,不再按照文档其它内容布局*/
+    top:24%;/*节点脱离了文档流,如果设置位置需要用top和left,right,bottom定位*/
+    left:24%;
+    z-index:20;/*个人理解为层级关系,由于这个节点要在顶部显示,所以这个值比其余节点的都大*/
+    background: white;
+}
+
+#title
+{
+    background:#f5f7f8;
+    width:100%;
+    height:1.5em;
+}
+#title a 
+{
+    float:right;
+}
+
+.wrapper{
+    position:absolute;
+    width:194px;
+    border:1px solid #b5b5b5;
+    background-color: #fff;
+    display:none;
+}
+.option{
+    height:30px;
+    padding:5px 4px;
+    cursor:pointer;
+}
+.wrapper div:hover{
+    background-color: #f00;
+}
+
+#over
+{
+    width: 100%;
+    height: 100%;
+    opacity:0.8;/*设置背景色透明度,1为完全不透明,IE需要使用filter:alpha(opacity=80);*/
+    filter:alpha(opacity=80);
+    display: none;
+    position:absolute;
+    top:0;
+    left:0;
+    z-index:1;
+    background:rgba(245, 241, 241, 0.35);
+}
+#loading{
+    width: 60%;
+    height: 80%;
+    position:absolute;
+    display: none;
+    margin:0;
+    z-index:2;
+    background-image: url(/assets/images/loading5.jpg);
+    background-repeat:no-repeat;
+    background-position: center;
+}
+
+.arrow-list {
+    display: block;
+    position: absolute;
+    top: 12px;
+    left: 150px;
+    margin-top: -5px;
+    margin-left: 70px;
+    width: 8px;
+    height: 8px;
+    background-color: #aaa;
+    -webkit-transform: rotate(45deg);
+    transform: rotate(45deg);
+}    
+.arrow-list:after {
+    content: '';
+    display: block;
+    position: absolute;
+    width: 8px;
+    height: 8px;
+    right: 2px;
+    top: 2px;
+    background-color: #fff;
+}
+.down:after{
+   bottom: 2px; 
+   top: -2px;
+}
+.left10{
+    padding-left: 10px;
+    display:none;
+}
+.clear{
+    clear:both;
+}
+.color-1{
+    font-size:24px;
+    color:#0099ff;
+    padding-left: 10px;
+    position:relative;
+}
+.color-2{
+    font-size:20px;
+    color:#00cc00;
+    padding-left: 10px;
+    position:relative;
+}
+.color-3{
+    font-size:16px;
+    color:#009999;
+    padding-left: 10px;
+    position:relative;
+}
+.color-4{
+    font-size:12px;
+    color:#cc0099;
+    padding-left: 10px;
+    position:relative;
+}
+.color-5{
+    font-size:10px;
+    color:#6666ff;
+    padding-left: 10px;
+    position:relative;
+}
+.color-6{
+    font-size:8px;
+    color:#999999;
+    padding-left: 10px;
+    position:relative;
+}
+.signLine{
+    background-color: #0ff;
+}

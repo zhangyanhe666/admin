@@ -1,0 +1,35 @@
+<style>
+    th,td,tr{
+        border:1px solid #009999
+    }
+    .alltime{
+        color: red;
+    }
+</style>
+<div class="alltime">执行时间：<?=$allTime?></div>
+<table >
+    <tr>
+    <th>id</th>
+    <th>wkid</th>
+    <th>源</th>
+    <th>名称</th>
+    <th>拼音</th>
+    <th>匹配拼音</th>
+    <th>匹配字</th>
+    <th>权重</th>
+    <th>时间</th>
+    <th>分词数</th>
+    <th>匹配次数</th>
+    </tr>
+    <?php foreach($data as $v):?>
+    <tr>
+        <?php foreach ($v as $vv):?>
+        <td><?=$vv?></td>
+        <?php endforeach;?>
+    </tr>
+    <?php endforeach;?>
+    <tr></tr>
+    <tr></tr>
+    
+    
+</table>

@@ -1,0 +1,35 @@
+<style>  
+body,td,th {font-family:"宋体"; font-size:12px;}  
+table{border-collapse:collapse;border:1px solid #CCC;background:#efefef;}  
+table caption{text-align:left; background-color:#fff; line-height:2em; font-size:14px; font-weight:bold; }  
+table th{text-align:left; font-weight:bold;height:26px; line-height:26px; font-size:12px; border:1px solid #CCC;}  
+table td{height:20px; font-size:12px; border:1px solid #CCC;background-color:#fff;}  
+.c1{ width: 120px;}  
+.c2{ width: 120px;}  
+.c3{ width: 70px;}  
+.c4{ width: 80px;}  
+.c5{ width: 80px;}  
+.c6{ width: 270px;}  
+.table-red *{
+    background-color: red;
+    color: #CCC;
+}
+</style> 
+<h1 style="text-align:center;">数据库文档</h1>
+<?php foreach ($tablesA AS $k=>$v):?>  
+<table  border="1" cellspacing="0" cellpadding="0" align="center">  
+        <caption><?=$k?></caption>;  
+    <tbody><tr><th>字段名</th><th>数据类型</th><th>默认值</th>  
+    <th>允许非空</th>  
+    <th>自动递增</th><th>备注</th></tr>    
+        <?php foreach ($v AS $kk=>$f):?>  
+        <tr><td class="c1"><?=$f['name']?></td>
+        <td class="c2"><?=$f['columnType']?></td> 
+        <td class="c3"><?=$f['default']?></td>
+        <td class="c4"> <?= $f['isNull']?></td>
+        <td class="c5"><?=($f['EXTRA']=='auto_increment'?'是':' ')?></td> 
+        <td class="c6"> <?= $f['comment']?></td>
+        </tr>
+        <?php endforeach;?>
+    </tbody></table></p> 
+<?php endforeach;?>

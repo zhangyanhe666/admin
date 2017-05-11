@@ -1,0 +1,25 @@
+<link rel="stylesheet" href="/assets/css/chart.css" media="screen" type="text/css" />
+<div class="charts--container">
+  <ul>
+    <li class="chart">
+      <h3 class="chart--subHeadline">评论统计趋势</h3>
+      <h2 class="chart--headline"></h2>
+      <div id="lineChart">
+        <svg id="lineChartSVG" class="lineChart--svg">
+          <defs>
+            <linearGradient id="lineChart--gradientBackgroundArea" x1="0" x2="0" y1="0" y2="1">
+              <stop class="lineChart--gradientBackgroundArea--top" offset="0%" />
+              <stop class="lineChart--gradientBackgroundArea--bottom" offset="100%" />
+            </linearGradient>
+          </defs>
+        </svg>
+      </div>
+    </li>
+  </ul>
+</div>
+<script>
+window.lineChart   =   <?=$linechart?>;
+</script>
+  <script src='/assets/js/d3.v3.min.js'></script>
+
+  <script src="/assets/js/chart.js"></script>

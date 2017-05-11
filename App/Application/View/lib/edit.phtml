@@ -1,0 +1,33 @@
+<div class="container">
+<script language="javascript" type="text/javascript" src="/assets/js/My97DatePicker/WdatePicker.js"></script>
+<script src="/assets/fck/ckeditor.js"></script>
+<link rel="stylesheet" href="/assets/fck/sample.css"/>
+<script type="text/javascript" src="/assets/js/jquery-form.js"></script> 
+<script type="text/javascript" src="/assets/js/jquery.imgareaselect.min.js"></script>
+<form id="imgform" style='display: none;'  action="/img/upload" method="post" enctype="multipart/form-data">
+    <input type="file" id="_imgFile" name="_imgFile" onchange="admin.previewImage(this)" style="display:none;" placeholder=""/>
+    <input type="text" id="_imgX1" name="_imgX1" value="" placeholder="">
+    <input type="text" id="_imgX2" name="_imgX2" value="" placeholder="">
+    <input type="text" id="_imgY1" name="_imgY1" value="" placeholder="">
+    <input type="text" id="_imgY2" name="_imgY2" value="" placeholder="">
+    <input type="text" id="_imgW" name="_imgW" value="" placeholder="">
+    <input type="text" id="_imgH" name="_imgH" value="" placeholder="">
+    <input type="text" id="_thumbW" name="_thumbW" value="" placeholder="">
+    <input type="text" id="_thumbH" name="_thumbH" value="" placeholder="">
+</form>
+<form role="form" class="" action="" id="album_form" method="post">
+    <?=$this->getServer('Tool\Tpl\TplFormat')->edit($item->toArray());?>
+        <input type='hidden' name='referer' value='<?=$this->router()->referer();?>'/>
+  <button type="button" id="submit"  name="submit" class="btn btn-default">Submit</button>
+</form>
+</div>
+
+<script>
+admin.addUrl =   '<?= isset($submitAction) ? $submitAction : $this->router()->url(array('action'=>'doEdit'));?>';
+admin.searchUrl =   "<?= $this->router()->url(array('action'=>'search'));?>";
+$(function(){
+    $("#submit").click(admin.doAdd);    
+    $('select').chosen();
+    $(document).click(admin.clareWrapper);
+})
+</script>

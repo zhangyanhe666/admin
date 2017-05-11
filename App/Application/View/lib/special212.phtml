@@ -1,0 +1,140 @@
+<!DOCTYPE html>
+<html>
+<head>
+<title><?=$special['title']?></title>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<meta name="viewport" content="width=device-width,minimum-scale=1.0,maximum-scale=1.0,user-scalable=no">
+<script type="text/javascript">var cnzz_protocol = (("https:" == document.location.protocol) ? " https://" : " http://");document.write(unescape("%3Cspan style='display:none' id='cnzz_stat_icon_1254030866'%3E%3C/span%3E%3Cscript src='" + cnzz_protocol + "s4.cnzz.com/z_stat.php%3Fid%3D1254030866' type='text/javascript'%3E%3C/script%3E"));
+</script>
+<!--end copy-->
+<script type="text/javascript" src="http://static1.wukongtv.com/special/zhuanti214/js/jquery.min.js"></script>
+<script type="text/javascript" src="http://static1.wukongtv.com/special/zhuanti214/js/jquery.lazyload.min.js"></script>
+<script src='http://static1.wukongtv.com/special/zhuanti214/js/zhuanti1.0.js'></script>
+<script src="http://static1.wukongtv.com/special/zhuantijson/js/vue.js"></script>
+<script src="http://static1.wukongtv.com/special/zhuantijson/js/adapter.js"></script>
+<link href="http://static1.wukongtv.com/special/zhuantijson/css/slick.css" rel="stylesheet" type="text/css" />
+<link href="http://static1.wukongtv.com/special/zhuantijson/css/slick-theme.css" rel="stylesheet" type="text/css" />
+<link href="http://static1.wukongtv.com/special/zhuantijson/css/video_detail_history.css" rel="stylesheet" type="text/css" />
+    <link rel="stylesheet" href="http://static1.wukongtv.com/special/zhuantijson/css/horizontal.css">
+    <script src="http://static1.wukongtv.com/special/zhuantijson/js/modernizr.js"></script>
+</head>
+<body>
+    <?=$special['content']?>
+<div class="box" id="box"></div>
+<div class="hint" id="hint">
+	<p class="hint_title">作者简介</p>
+	<div class="text">
+		<div style="line-height: 20px;font-size: 14px;" id="desc"></div>
+	</div>
+	<div style="padding:10px 30px;margin-bottom:30px ">
+		<div class="td_left" id="name">微信公众号</div>
+		<div class="weixin_num" id="weixin_id"></div>
+	</div>
+	<p style="background-color: #e1e1e1;margin-left:0px;width: 100%;height: 1px;bottom: 46px;position:absolute"></p>
+	<div id="close">关闭</div>
+</div>
+<div class="padding-line"></div>
+<div class="history" id="video_his">
+    <p class="history-title">往期回顾</p>
+    <div class="wrap">
+        <div class="frame" id="basic">
+            <ul class="clearfix" style="transform: translateZ(0px) translateX(-684px); width: 6840px;">
+                <li v-for="list in his_videos">
+                    <div class="shadow-div">{{list.tag}}</div>
+                    <img :src="list.cover" v-on:click="open_link(list.url)">
+                    <p class="his_name">{{list.title}}</p>
+                </li>
+            </ul>
+        </div>
+    </div>
+</div>
+<!--end copy-->
+<script>
+    window.tag  =   "<?=$tag?>";
+$('img').each(function(){
+    var imgs    =   [
+        'http://static1.wukongtv.com/special/zhuanti214/img/logo.png',
+        'http://static1.wukongtv.com/special/zhuanti214/img/download.png',
+        'http://img.wukongtv.com/web/huodong/environment/wx.png',
+    ];
+    if($.inArray($(this).attr('src'),imgs) == -1){
+        $(this).attr('data-original',$(this).attr('src'));
+        $(this).attr('src','http://static1.wukongtv.com/special/zhuanti214/img/loading.png');
+    }
+});
+jQuery(document).ready(
+function($){
+
+$("img").lazyload({
+
+     placeholder : "http://static1.wukongtv.com/special/zhuanti214/img/loading.png", //加载图片前的占位图片
+
+     effect      : "fadeIn" //加载图片使用的效果(淡入)
+
+});
+});
+window.shareInfo    =   <?=$share?>;
+//加载时先隐藏按钮
+$('#down').hide();
+
+ /*window.onload = function(){
+
+    //在应用内删除下载条
+   if(zhuanti.is_qq() || zhuanti.is_weichat()){
+            zhuanti.showEle('down');
+    }
+    //存在下载条
+    if(!!zhuanti.getid('down')){
+        zhuanti.getid("down").addEventListener('click', function () {
+            window.open(zhuanti.downUrl);
+        }, false);
+    }
+
+    //分享
+    zhuanti.init({
+        shareid:'share',
+        shareData:'',
+    });
+    zhuanti.share();
+    zhuanti.showmenus();
+}*/
+         
+zhuanti.getid("close").addEventListener('click', function () {
+    zhuanti.hideEle('hint');
+    zhuanti.hideEle('box');
+}, false);
+zhuanti.getid('hint').addEventListener('click', function () {
+    zhuanti.getid("close").click();
+}, false);
+zhuanti.getid('box').addEventListener('click', function () {
+    zhuanti.getid("close").click();
+}, false);
+
+//显示影评人信息
+function showMovice(wx,desc){
+    //影评人
+    zhuanti.getid('weixin_id').innerHTML    =   wx;
+    zhuanti.getid('desc').innerHTML    =   desc;
+    zhuanti.showEle('hint');
+    zhuanti.showEle('box');
+}
+//按钮点击态
+function buttonDown(t){
+    t.style.backgroundColor =   "#7174ff";
+    t.style.color           =   "#ffffff";
+}
+//按钮点击态
+function buttonUp(t){
+    t.style.backgroundColor =   "#ffffff";
+    t.style.color           =   "#7174ff";
+}
+
+</script>
+<script src="http://static1.wukongtv.com/special/zhuantijson/js/slick.js"></script>
+<script src="http://static1.wukongtv.com/special/zhuantijson/js/history.js"></script>
+    <script src="http://static1.wukongtv.com/special/zhuantijson/js/modernizr.js"></script>
+<script src="http://static1.wukongtv.com/special/zhuantijson/js/plugins.js"></script>
+<script src="http://static1.wukongtv.com/special/zhuantijson/js/sly.min.js"></script>
+<script src="http://static1.wukongtv.com/special/zhuantijson/js/horizontal.js"></script>
+</body>
+</html>

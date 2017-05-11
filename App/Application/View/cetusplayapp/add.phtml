@@ -1,0 +1,21 @@
+<?=$this->content?>
+<script>
+var search  =   '<a class="btn btn-primary btn-sm" onclick="javascript:searchApp();" href="javascript:void(0);">搜索</a>';
+$('#album_form').prepend(search);
+function searchApp(){
+    var name    =   $('#apptitle').val();
+    $.ajax({
+        url:"http://api.cetusplay.com:10086/appstore/searchApp?name="+name,
+        success:function(data){
+            var ret     =   eval("("+data+")");
+            if(ret.status == 'Y'){
+                for(var i in ret.data){
+                    $('#'+i).val(ret.data[i]);
+                }                
+            }else{
+                alert('没有找到应用');
+            }
+        }
+    });
+}
+</script>
