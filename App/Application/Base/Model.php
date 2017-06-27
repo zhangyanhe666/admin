@@ -13,7 +13,10 @@ class Model extends LibModel{
     //初始化数据库对象
     public function init() {
         //如果model 中没有设置数据库会存在问题
-        $this->mem()->setMonitor($this->getCompleteTableName());
+        try {
+            $this->mem()->setMonitor($this->getCompleteTableName());
+        } catch (\Exception $exc) {
+        }
         return $this;
     }
     //初始化数据库配置

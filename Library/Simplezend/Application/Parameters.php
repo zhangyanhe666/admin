@@ -23,7 +23,7 @@ class Parameters extends PhpArrayObject
      */
     public function __construct($values = null)
     {
-        if (empty($values)) {
+        if (empty($values) || !is_array($values)) {
             $values = array();
         }
         parent::__construct($values, ArrayObject::ARRAY_AS_PROPS);

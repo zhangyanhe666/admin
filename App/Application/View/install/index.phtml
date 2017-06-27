@@ -25,17 +25,17 @@
                                         <fieldset>
                                             <label class="block clearfix"> 
                                                 <span	class="block input-icon input-icon-right">
-                                                    dsn备注：mysql:dbname=%s;host=localhost:3306
+                                                    <input	type="text" class="form-control loginno" placeholder="服务器ip" name="host" value="localhost"> 
                                                 </span>
                                             </label>
                                             <label class="block clearfix"> 
                                                 <span	class="block input-icon input-icon-right">
-                                                    <input	type="text" class="form-control loginno" placeholder="dsn" name="dsn"> 
+                                                    <input	type="text" class="form-control loginno" placeholder="端口" name="port" value="3306"> 
                                                 </span>
                                             </label>
                                             <label class="block clearfix"> 
                                                 <span	class="block input-icon input-icon-right">
-                                                    <input	type="text" class="form-control loginno" placeholder="用户名" name="username"> 
+                                                    <input	type="text" class="form-control loginno" placeholder="用户名" name="username" value="root"> 
                                                 </span>
                                             </label>
                                             <label class="block clearfix">
@@ -45,9 +45,10 @@
                                             </label>
                                             <label class="block clearfix">
                                                 <span class="block input-icon input-icon-right"> 
-                                                    <input	type="text" class="form-control loginpass" placeholder="数据库名称" name="dbname">
+                                                    <input	type="text" class="form-control loginpass" placeholder="数据库名称" name="dbname" value="sys">
                                                 </span>
                                             </label>
+                                            <input	type="hidden"   name="key" value="sys">
                                             <div class="space"></div>                                           
                                             <div class="clearfix">
                                                 <button type="button"	class="width-35 pull-right btn btn-sm btn-primary" id="submit"> 
@@ -86,7 +87,7 @@ $(function(){
                 if(data.status == 'N'){
                     alert(data.msg);
                 }else{
-                    location.href    =   "<?=$this->router()->url(\Library\Application\Common::$login)?>";
+                    location.href    =   "<?=$this->router()->url(\Application\Tool\Router::$login)?>";
                 }
             }
         });

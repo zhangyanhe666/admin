@@ -22,6 +22,7 @@ class ServiceManagerConfig{
                  'response'=>'\Library\Response\Response',
                  'autoload'=>'\Library\Loder\Autoload',
                  'curl'=>'\Library\Http\Curl',
+                 'cookies'=>'\Library\Application\Cookies',
                  'file'=>'\Library\Application\File',
                  'pinyin'=>'\Library\Application\Pinyin',
                  'ftp'=>'\Library\Application\Ftp',

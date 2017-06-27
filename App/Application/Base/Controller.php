@@ -5,7 +5,7 @@
  */
 namespace Application\Base;
 use Library\Application\Controller as LibController;
-use Library\Application\Common;
+use Application\Tool\Router;
 use Application\Tool\User;
 class Controller extends LibController{
     //成功的格式化json返回
@@ -41,20 +41,22 @@ class Controller extends LibController{
     //检测登陆
     protected function checkLogin(){
         if(!User::isLogin()){
-            $this->router()->toUrl(Common::$login,array('url'=>$this->router()->url(array('action'=>'index'))));
+            $url    =   $this->router()->url([],[],true);
+            $this->getServer('cookies')->set('referer',$url);
+            $this->router()->toUrl(Router::$login);
         }
     }
     //检测安装
     protected function checkInstall(){
         if($this->config()->dbConfig->count() == 0){
-            $this->router()->toUrl(Common::$install);
+            $this->router()->toUrl(Router::$install);
         }        
     }
     //检测权限
     protected function checkAuth($menuid=''){
         $menuid = empty($menuid) ? $this->router()->getMenuId() : $menuid;
         if(!$this->getServer('Model\AdminUser')->auth($menuid)){
-            $this->router()->toUrl(Common::$error,array('msg'=>'无权访问'));
+            $this->router()->toUrl(Router::$error,array('msg'=>'无权访问'));
         }
     }
 }

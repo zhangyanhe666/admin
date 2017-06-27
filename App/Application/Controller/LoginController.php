@@ -1,7 +1,7 @@
 <?php
 namespace Application\Controller;
 use Application\Base\Controller;
-use Library\Application\Common;
+use Application\Tool\Router;
 use Application\Tool\User;
 class LoginController extends Controller
 {
@@ -14,7 +14,7 @@ class LoginController extends Controller
     {
         //检测登陆
         if(User::isLogin()){
-            $this->router()->toUrl(Common::$index);
+            $this->router()->toUrl(Router::$index);
         }
         $this->viewData()->setPTpl('login');
     }
@@ -32,7 +32,7 @@ class LoginController extends Controller
     }    
     public function logoutAction(){
         User::unlogin();
-        $this->router()->toUrl(Common::$login);
+        $this->router()->toUrl(Router::$login);
     }
 
 

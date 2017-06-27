@@ -9,36 +9,43 @@
 
 namespace Application\Controller;
 use Application\Base\Controller;
+use Application\Tool\Router;
 class InstallController extends Controller
 {   
     public function init() {
-        if($this->getMyGlobal()->isInstall()){
-            $this->router()->toUrl($this->getMyGlobal()->index);
+        if($this->config()->dbConfig->count() != 0){
+            $this->router()->toUrl(Router::$login);
         }
     }
 
     public function indexAction()
     {        
-        $this->setVariable('myGlobal', $this->getMyGlobal());
-        $this->setPTpl('install');
+        $this->viewData()->setPTpl('install');
     }
     public function installdbAction(){   
-        $dsn        =   $this->getRequest()->getPost('dsn');
+        $key        =   $this->getRequest()->getPost('key');
+        $host       =   $this->getRequest()->getPost('host');
+        $port       =   $this->getRequest()->getPost('port');
         $username   =   $this->getRequest()->getPost('username');
         $password   =   $this->getRequest()->getPost('password');
         $dbname     =   $this->getRequest()->getPost('dbname');
-        try{
-            //创建数据库
-            $this->createDatabase($dsn,$username,$password,$dbname);
-            //创建表
-            $this->createTable($dsn,$username,$password,$dbname);
-            //创建local配置文件
-            $this->createConfigLocal($dsn,$username,$password,$dbname);
-        } catch (\Exception $exc) {
-            return $this->defaultJson('N',  \Application\Tool\Comment::getSqlError($exc));
-        }        
+        $structure  =   $this->getServer('Model\Structure');
         
-        return $this->defaultJson();
+        //创建数据库
+        $dbConfig   =   $structure->dbConfig($host,$port,$username,$password,'INFORMATION_SCHEMA');
+        $exist      =   $structure->setAdapterByConfig($dbConfig)->checkDbExist($dbname);
+        if($exist){
+            throw new \Exception('数据库已存在');
+        }
+        $status =   $structure->setAdapterByConfig($dbConfig)->createDb($dbname);
+
+        //创建表
+        $sql    =   $this->getServer('file')->conn($this->getServer('config')->filePath('Config/install.sql'))->get();
+        $dbConfig   =   $structure->dbConfig($host,$port,$username,$password,$dbname,$key);
+        $status =   $structure->setAdapterByConfig($dbConfig)->getAdapter()->query($sql, \Library\Db\Adapter\Adapter::QUERY_MODE_EXECUTE);
+        //存储文件配置
+        $structure->saveDbConfig($key,$dbConfig);
+
     }
     //创建数据库
     private function createDatabase($dsn,$username,$password,$dbname){
@@ -46,7 +53,6 @@ class InstallController extends Controller
         $sql        =   'SELECT count(*)  num FROM INFORMATION_SCHEMA.TABLES WHERE table_schema="'.$dbname.'"';//检测数据库是否存在
         $res        =   $sys->query($sql, 'execute');
         if($res->current()->num > 0){
-            throw new \Exception('数据库已存在');
         }else{
             $createSql  =   'create database '.$dbname.';';
             $sys->query($createSql, 'execute');

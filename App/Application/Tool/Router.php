@@ -9,7 +9,10 @@ namespace Application\Tool;
 use Library\Application\Router as LibRouter;
 
 class Router extends LibRouter{
-    
+    public static $install      =   array('control'=>'install','action'=>'index');
+    public static $login        =   array('control'=>'login','action'=>'index');
+    public static $error        =   array('control'=>'error','action'=>'index');
+    public static $index        =   array('control'=>'index','action'=>'index');
     public function getControl($full=false){
         $control    =   strstr($this->control, '_',true);
         return $control && !$full ? $control : $this->control;

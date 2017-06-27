@@ -13,7 +13,6 @@ MySQL - 5.6.21-log : Database - sys
 /*!40014 SET @OLD_FOREIGN_KEY_CHECKS=@@FOREIGN_KEY_CHECKS, FOREIGN_KEY_CHECKS=0 */;
 /*!40101 SET @OLD_SQL_MODE=@@SQL_MODE, SQL_MODE='NO_AUTO_VALUE_ON_ZERO' */;
 /*!40111 SET @OLD_SQL_NOTES=@@SQL_NOTES, SQL_NOTES=0 */;
-CREATE DATABASE /*!32312 IF NOT EXISTS*/`sys` /*!40100 DEFAULT CHARACTER SET utf16le */;
 
 /*Table structure for table `sys_authority` */
 
@@ -46,6 +45,7 @@ CREATE TABLE `sys_childmenu` (
   `sort` int(11) DEFAULT '0' COMMENT '排列顺序',
   `attach` varchar(255) DEFAULT '' COMMENT '附加值',
   `is_show` int(2) DEFAULT '0' COMMENT '是否显示',
+  `person_in_charge` VARCHAR(255) DEFAULT '' COMMENT '管理员提示',
   PRIMARY KEY (`id`)
 ) ENGINE=InnoDB  DEFAULT CHARSET=utf8 COMMENT='项目表';
 
@@ -127,6 +127,7 @@ CREATE TABLE `sys_menu` (
   `name` varchar(200) DEFAULT NULL COMMENT '项目名',
   `sort` int(11) DEFAULT '0' COMMENT '排列顺序',
   `is_show` int(2) DEFAULT '0' COMMENT '是否显示',
+  `parent_id` INT(11) NOT NULL DEFAULT 0 COMMENT '父id',
   PRIMARY KEY (`id`),
   UNIQUE KEY `name` (`name`)
 ) ENGINE=InnoDB  DEFAULT CHARSET=utf8 COMMENT='项目表';

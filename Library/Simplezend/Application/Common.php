@@ -9,10 +9,7 @@
 namespace Library\Application;
 
 class Common{
-    public static $install      =   array('control'=>'install','action'=>'index');
-    public static $login        =   array('control'=>'login','action'=>'index');
-    public static $error        =   array('control'=>'error','action'=>'index');
-    public static $index        =   array('control'=>'index','action'=>'index');
+
     public static $showError    =   false;
     public static $timeAnchor   =   array();
     public static function arrayResetKey($arr,$key){
