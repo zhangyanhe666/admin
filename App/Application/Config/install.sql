@@ -191,7 +191,7 @@ CREATE TABLE sys_custom_table_config(
 id INT(11) NOT NULL AUTO_INCREMENT COMMENT '编号',
 `table_name`  VARCHAR(50) DEFAULT '' COMMENT '表名',
 `menu_id` INT(11) DEFAULT 0 COMMENT '标签id',
-`config` VARCHAR(1000) DEFAULT '' COMMENT '配置',
+`config` TEXT COMMENT '配置',
 PRIMARY KEY(`id`)
 )ENGINE=MYISAM DEFAULT CHARSET=utf8 COMMENT='配置信息';
 

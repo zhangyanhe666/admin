@@ -366,17 +366,7 @@ class Common{
        }
        return false;
    }
-   //开启或屏蔽错误
-   public static function Error($open){
-        if ($open) {            
-            error_reporting(E_ALL);
-            ini_set('display_errors', 'On');
-        } else {
-            error_reporting(0);
-            ini_set('display_errors', 'Off');
-        }
-        self::$showError    =   $open;
-   }
+
     //获取指定键的
     public static function array_value(array $arr,array $keys,$type=''){
         if(empty($keys)){

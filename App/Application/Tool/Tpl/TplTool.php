@@ -96,7 +96,7 @@ TD;
     public function img($value,$column){
         $url    =   $this->_url($value,$column);
         $str    =   <<<TD
-        <a href="{$url}" target="_blank"><img src="{$url}" height="50px" /></a>
+        <a href="{$url}" target="_blank"><img src="{$url}" height="150px" /></a>
 TD;
         return $str;
     }

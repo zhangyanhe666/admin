@@ -26,7 +26,8 @@ class ServiceManagerConfig{
                  'file'=>'\Library\Application\File',
                  'pinyin'=>'\Library\Application\Pinyin',
                  'ftp'=>'\Library\Application\Ftp',
-                 'excel'=>'\Library\Excel\SpreadsheetExcelReader'
+                 'excel'=>'\Library\Excel\SpreadsheetExcelReader',
+                 'error'=>'\Library\Application\Error'
             );
     //实例对象并赋予service对象
     protected $instancesService =   array(

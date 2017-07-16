@@ -91,7 +91,7 @@ class Model extends TableGateway\MyAbstractTableGateway{
             return $a1.$a2;
         });
         $sql    =   'insert ignore into '.$this->table.'(`'.implode('`,`', $columns).'`) values'.trim($values,',').$this->batchUpdate;
-        $this->adminLog($sql);
+        //$this->adminLog($sql);
         return $this->adapter->query($sql,  Adapter::QUERY_MODE_EXECUTE);
     }
     public function batchUpdate($columns){

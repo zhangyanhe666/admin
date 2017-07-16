@@ -7,7 +7,6 @@
  */
 
 namespace Library\Application;
-
 class Config{
     public $systemRoot;
     public $project;
