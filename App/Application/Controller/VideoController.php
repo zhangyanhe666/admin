@@ -8,15 +8,13 @@
 
 namespace Application\Controller;
 use Application\Base\PublicController;
-use Library\Dom\Query;
-use Application\Exception\AccessappalbumException;
 use Application\Tool\Html;
 class VideoController extends PublicController
 {
     public $host    =   'http://jp.xieav.com';
     public $wyjcuri =   '/one/wyjc/index%s.shtml';
     public $uri     =   '/one/LLP/index%s.shtml';
-	public function indexAction() {
+    public function indexAction() {
         //设定工具栏
         Html::addOption('edit','编辑');
         Html::addOption('copy','复制');
@@ -50,11 +48,7 @@ class VideoController extends PublicController
              ->setVariable('columnSwitch', $this->getServer('Model\Custom')->getMeans());//开关
              //->addTpl('lib/list');
     }
-   /* public function indexAction() {
-        parent::indexAction();        
-       // Html::addTool('updateVideo','更新视频',array('exec'=>1));
-        Html::addTool('updateVideo','更新视频1',array('href'=>  $this->router()->url(array('action'=>'updateVideo'),array(),true)));
-    }*/
+
     public function dom($url){
         $html   =   $this->getServer('curl')->exec($url)->result();
         $html   =   str_replace('gb2312', 'utf-8', $html);
