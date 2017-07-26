@@ -37,7 +37,7 @@ class Config{
                     $this->setProject($config['project'],isset($config['uri']) ? $config['uri'] : '');
                     break;
                 case 'dbConfig': 
-                    $this->dbConfig     =   new Parameters(require_once $config['dbConfig']);
+                    $this->dbConfig     =   is_file($config['dbConfig']) ? new Parameters(require_once $config['dbConfig']) : new Parameters();
                     $this->dbConfigPath =   $config['dbConfig'];
                     break;
                 case 'error':

@@ -52,10 +52,10 @@ CREATE TABLE `sys_childmenu` (
 /*Data for the table `sys_childmenu` */
 
 insert  into `sys_childmenu`(`parent_id`,`name`,`action`,`table_name`,`sort`,`attach`,`is_show`) values(1,'数据库管理','structure','',0,'',0),
-(1,'项目管理','menu','',0,'',0),
-(1,'子项目管理','dispatch','childMenu',0,'',0),
-(1,'用户管理','adminuser','',0,'',0),
-(1,'用户组管理','admingroup','',0,'',0),
+(1,'项目管理','menu','Model\Menu',0,'',0),
+(1,'子项目管理','dispatch','Model\ChildMenu',0,'',0),
+(1,'用户管理','adminuser','Model\AdminUser',0,'',0),
+(1,'用户组管理','admingroup','Model\AdminGroup',0,'',0),
 (1,'ftp-cdn管理','ftp','',0,'',0),
 (1,'管理员日志','dispatch','sys.sys_log',0,'',0),
 (1,'缓存管理','dispatch','sys.sys_memcache',0,'',0),
