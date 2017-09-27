@@ -368,13 +368,16 @@ class Common{
    }
 
     //获取指定键的
-    public static function array_value(array $arr,array $keys,$type=''){
+    public static function array_value(array $arr,array $keys,$type='',$callback=''){
         if(empty($keys)){
             return array();
         }
         $keys   =   array_flip($keys);
         if($type == 'map'){
-            $data   =   array_map(function($v) use($keys){
+            $data   =   array_map(function($v) use($keys,$callback){
+                if(is_callable($callback)){
+                    $v  =   $callback($v);
+                }
                 return array_intersect_key($v, $keys);
             },$arr);
         }else{
