@@ -79,10 +79,8 @@ class ExceptionHandle{
     }
     //打印错误信息
     public function printMsg($exc){
-        if(Common::$showError){
-            echo $this->getMsg($exc).'<br>';            
-            echo str_replace('#','<br/>#',$exc->getTraceAsString());
-        }
+        echo $this->getMsg($exc).'<br>';
+        echo str_replace('#','<br/>#',$exc->getTraceAsString());
         exit;
     }
     //获取异常信息

@@ -11,7 +11,7 @@ namespace Library\Application;
 class Error{
     
     public function setPhpError($status = false){
-        if ($status) {            
+        if (!$status) {            
             error_reporting(E_ALL);
             ini_set('display_errors', 'On');
         } else {
