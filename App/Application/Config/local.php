@@ -24,4 +24,16 @@ return array (
       1002 => 'SET NAMES \'UTF8\'',
     ),
   ),
+  'mili' => 
+  array (
+    'driver' => 'Pdo',
+    'key' => 'mili',
+    'dsn' => 'mysql:dbname=mili;host=101.201.113.171:3306',
+    'username' => 'mili',
+    'password' => 'Mili_123',
+    'driver_options' => 
+    array (
+      1002 => 'SET NAMES \'UTF8\'',
+    ),
+  ),
 );
