@@ -27,7 +27,8 @@ class ServiceManagerConfig{
                  'pinyin'=>'\Library\Application\Pinyin',
                  'ftp'=>'\Library\Application\Ftp',
                  'excel'=>'\Library\Excel\SpreadsheetExcelReader',
-                 'error'=>'\Library\Application\Error'
+                 'error'=>'\Library\Application\Error',
+                 'pinyin'=>'\Library\Application\Pinyin'
             );
     //实例对象并赋予service对象
     protected $instancesService =   array(
