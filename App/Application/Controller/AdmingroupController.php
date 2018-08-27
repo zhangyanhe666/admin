@@ -17,7 +17,6 @@ class AdmingroupController extends PublicController
         $this->viewData()->setVariable('checkBoxTitle',  '数据库列表');
         $this->viewData()->setVariable('checkBoxList',  $this->getServer('Model\ChildMenu')->getMenuList());
         $this->viewData()->addTpl('lib/checkBoxList');
-        dafsdfd
     }
     //编辑页
     public function editAction() {
