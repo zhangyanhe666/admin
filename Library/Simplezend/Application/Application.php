@@ -1,15 +1,19 @@
 <?php
 
 /* 
- * To change this license header, choose License Headers in Project Properties.
- * To change this template file, choose Tools | Templates
- * and open the template in the editor.
+ * 框架入口文件
+ * 处理配置文件加载和必要插件的启动
  */
 namespace Library\Application;
 use Library\ServiceManager\ServiceManager;
 use Library\ServiceManager\ServiceManagerConfig;
 use Library\Application\Common;
 class Application{
+    /**
+     * 入口文件类,需要做如下事情
+     * 1.加载初始化配置
+     * 2.执行启动程序
+     */
     public $serverManager;
     //初始化App
     public function __construct($serverManager) {
