@@ -31,11 +31,15 @@ class InstallController extends Controller
         $dbname     =   $this->getRequest()->getPost('dbname');
         $structure  =   $this->getServer('Model\Structure');
         
-        //创建数据库
-        $dbConfig   =   $structure->dbConfig($host,$port,$username,$password,'INFORMATION_SCHEMA');
-        $exist      =   $structure->setAdapterByConfig($dbConfig)->checkDbExist($dbname);
+        try{
+            //创建数据库
+            $dbConfig   =   $structure->dbConfig($host,$port,$username,$password,'INFORMATION_SCHEMA');
+            $exist      =   $structure->setAdapterByConfig($dbConfig)->checkDbExist($dbname);
+        }catch(\Exception $e){
+            return $this->responseError('配置信息错误'.$e->getMessage());
+        }
         if($exist){
-            throw new \Exception('数据库已存在');
+            return $this->responseError('数据库已存在');
         }
         $status =   $structure->setAdapterByConfig($dbConfig)->createDb($dbname);
 
