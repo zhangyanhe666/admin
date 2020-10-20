@@ -45,11 +45,11 @@ class DebuglogController extends Controller{
             if($status !== '' && !$statusColumn){
                 $where[$statusColumn]    =   $status;
             }
-            $data   =   $this->getServer('wukong214.'.$table)->columns($columns)->where($where)->limit(500)->getAll()->toArray();
+            $data   =   $this->getService('wukong214.'.$table)->columns($columns)->where($where)->limit(500)->getAll()->toArray();
             if(!empty($data)){
                 $wkidarr    =   array_column($data,$wkid);
                 $namearr    =   array_column($data,$name);
-                $this->getServer('search.search_all')->batchInsert1(array('wkid','source','name'),$wkidarr,$table,$namearr);
+                $this->getService('search.search_all')->batchInsert1(array('wkid','source','name'),$wkidarr,$table,$namearr);
                 $end    =   end($data);
                 $startId=   $end['id'];
             }
@@ -60,13 +60,13 @@ class DebuglogController extends Controller{
         //脚本每次执行限制条数
         set_time_limit(0);
         $charactors = array('A', 'B', 'C', 'D', 'E', 'F', 'G', 'H', 'I', 'J', 'K', 'L', 'M', 'N', 'O', 'P', 'Q', 'R', 'S', 'T', 'U', 'V', 'W', 'X', 'Y', 'Z');
-       // $this->getServer('search.search_all')->update(array('status'=>'1'));
+       // $this->getService('search.search_all')->update(array('status'=>'1'));
         $startId    = $this->getRequest()->getQuery('id',0);
         do{
             $where  =   array();
             $where[]=   'id>'.$startId;
          //   $where['status']    =   '1';
-            $data   =   $this->getServer('search.search_all')->where($where)->limit(500)->order('id')->getAll()->toArray();
+            $data   =   $this->getService('search.search_all')->where($where)->limit(500)->order('id')->getAll()->toArray();
             
             if(!empty($data)){
                 
@@ -81,9 +81,9 @@ class DebuglogController extends Controller{
                 foreach ($data as $v){
 
                     //二分词入库
-                    $pyarr  =   $this->getServer('pinyin')->cutWord($v['name']);  
+                    $pyarr  =   $this->getService('pinyin')->cutWord($v['name']);  
                     $count  =   count($pyarr);                    
-                    $pyStr  =   $this->getServer('pinyin')->str2py($v['name'],' ');
+                    $pyStr  =   $this->getService('pinyin')->str2py($v['name'],' ');
                     for($i=1;$i<$count;$i++){
                         $psk                =   $pyarr[$i]['py']{0};
                         $twkid[$psk][]    =   $v['wkid'];
@@ -98,7 +98,7 @@ class DebuglogController extends Controller{
                 }
                 foreach ($keys as $v){
                     $tableKey   =   !in_array(strtoupper($v),$charactors) ? 0 : $v;
-                    $this->getServer('search.search_'.$tableKey)->batchInsert1(
+                    $this->getService('search.search_'.$tableKey)->batchInsert1(
                             array('wkid','source','name','py','searchpy','searchzi','weight'),
                             $twkid[$v],
                             $tsource[$v],
@@ -115,18 +115,18 @@ class DebuglogController extends Controller{
             }          
         }while (!empty($data));
         
-      //  $this->getServer('search.search_all')->delete(array('status'=>'1'));
+      //  $this->getService('search.search_all')->delete(array('status'=>'1'));
     }
     public function inputWordFirstAction(){
          set_time_limit(0);
         $charactors = array('A', 'B', 'C', 'D', 'E', 'F', 'G', 'H', 'I', 'J', 'K', 'L', 'M', 'N', 'O', 'P', 'Q', 'R', 'S', 'T', 'U', 'V', 'W', 'X', 'Y', 'Z');
-       // $this->getServer('search.search_all')->update(array('status'=>'1'));
+       // $this->getService('search.search_all')->update(array('status'=>'1'));
         $startId    = 4000;
         do{
             $where  =   array();
             $where[]=   'id>'.$startId;
          //   $where['status']    =   '1';
-            $data   =   $this->getServer('search.search_all')->where($where)->limit(2000)->order('id')->getAll()->toArray();
+            $data   =   $this->getService('search.search_all')->where($where)->limit(2000)->order('id')->getAll()->toArray();
             
             if(!empty($data)){
                 $fsearchzi  =   array();
@@ -139,7 +139,7 @@ class DebuglogController extends Controller{
                     $fwkid[]        =   $v['wkid'];
                     $fsource[]      =   $v['source'];
                 }
-                $this->getServer('search.search_first')->batchInsert1(array('wkid','source','searchzi'),$fwkid,$fsource,$fsearchzi);
+                $this->getService('search.search_first')->batchInsert1(array('wkid','source','searchzi'),$fwkid,$fsource,$fsearchzi);
                 $end    =   end($data);
                 $startId=   $end['id'];
             }
@@ -148,13 +148,13 @@ class DebuglogController extends Controller{
     public function sAction(){
         $charactors = array('A', 'B', 'C', 'D', 'E', 'F', 'G', 'H', 'I', 'J', 'K', 'L', 'M', 'N', 'O', 'P', 'Q', 'R', 'S', 'T', 'U', 'V', 'W', 'X', 'Y', 'Z');
         $w      =   $this->getRequest()->getQuery('w');
-        $pyarr  =   $this->getServer('pinyin')->cutWord($w);
+        $pyarr  =   $this->getService('pinyin')->cutWord($w);
         $pcount =   count($pyarr);
         $data   =   array();
         foreach ($pyarr as $v){
             $s          =   $v['py']{0};
             $s          =   !in_array(strtoupper($s),$charactors) ? 0 : $s;
-            $res        =   $this->getServer('search.search_'.$s)->where(array('searchzi'=>$v['zi']))->order('weight')->limit(50)->getAll()->toArray();
+            $res        =   $this->getService('search.search_'.$s)->where(array('searchzi'=>$v['zi']))->order('weight')->limit(50)->getAll()->toArray();
             $data       =   \Library\Application\Common::merge($data, $res);
         }
         return $this->responseSuccess($data);
@@ -187,7 +187,7 @@ class DebuglogController extends Controller{
         set_time_limit(0);
         $res    =   $this->getModel('search.search_app_pinyin')->getAll()->toArray();
         foreach ($res as $v){
-            $py     =    $this->getServer('pinyin')->cutWord($v['name']);
+            $py     =    $this->getService('pinyin')->cutWord($v['name']);
             $info['searchpy']   =   implode(',', array_column($py,'py'));
             $info['searchzi']   =   implode(',', array_column($py,'zi'));
             $this->getModel('search.search_app_pinyin')->update($info,array('id'=>$v['id']));
@@ -215,7 +215,7 @@ class DebuglogController extends Controller{
     }
     public function sAction(){
         $w      =   $this->getRequest()->getQuery('w');
-        $pyarr  =   $this->getServer('pinyin')->cutWord($w);
+        $pyarr  =   $this->getService('pinyin')->cutWord($w);
         $pcount =   count($pyarr);
         $data   =   array();
         foreach ($pyarr as $v){

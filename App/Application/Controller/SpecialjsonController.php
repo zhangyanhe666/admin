@@ -18,7 +18,7 @@ class SpecialjsonController extends PublicController
                     )
                 );
         Html::addOption('editvote', '票');
-        $voteId = $this->getServer('Model\ChildMenu')->where(array('table_name'=>$this->selfTable()->dbKey().'.special_vote_option'))->getRow()->id;
+        $voteId = $this->getService('Model\ChildMenu')->where(array('table_name'=>$this->selfTable()->dbKey().'.special_vote_option'))->getRow()->id;
         Html::addOption('editoption', '票项',
                 array(
                     'href'=>  $this->router()->url(array('control'=>'dispatch_'.$voteId),array('sign'=>'__id')),

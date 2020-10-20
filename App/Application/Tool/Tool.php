@@ -16,10 +16,10 @@ class Tool{
     public function init(){
         
     }
-    public function getServer($server,$useAlreadyExists=true){
-        return $this->getServerManager()->get($server,$useAlreadyExists);
+    public function getService($server,$useAlreadyExists=true){
+        return $this->getServiceManager()->get($server,$useAlreadyExists);
     }
-    public function getServerManager(){
+    public function getServiceManager(){
         return $this->__service;
     }
     //设置Service

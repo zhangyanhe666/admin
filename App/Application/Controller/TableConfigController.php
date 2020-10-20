@@ -28,15 +28,15 @@ class TableConfigController extends Controller{
         try {
             return  parent::onDispatch();
         } catch (\Exception $exc) {
-            $msg    = $this->getServer('exceptionhandle')->getMsg($exc);
+            $msg    = $this->getService('exceptionhandle')->getMsg($exc);
             return !$this->getRequest()->isAjax() ?  $this->router()->error($msg) : $this->responseError($msg);
         }
     }
     public function tableConfig(){
-        return $this->getServer('Tool\TableConfig')->setMenuId($this->menuId)->setTable($this->getRequest()->getQuery('table'));
+        return $this->getService('Tool\TableConfig')->setMenuId($this->menuId)->setTable($this->getRequest()->getQuery('table'));
     }
     public function tplTool(){
-        return $this->getServer('Tool\Tpl\TplTool');
+        return $this->getService('Tool\Tpl\TplTool');
     }
     //表的编辑页
     public function editAction(){

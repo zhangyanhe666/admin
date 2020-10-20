@@ -29,7 +29,7 @@ class InstallController extends Controller
         $username   =   $this->getRequest()->getPost('username');
         $password   =   $this->getRequest()->getPost('password');
         $dbname     =   $this->getRequest()->getPost('dbname');
-        $structure  =   $this->getServer('Model\Structure');
+        $structure  =   $this->getService('Model\Structure');
         
         try{
             //创建数据库
@@ -44,7 +44,7 @@ class InstallController extends Controller
         $status =   $structure->setAdapterByConfig($dbConfig)->createDb($dbname);
 
         //创建表
-        $sql    =   $this->getServer('file')->conn($this->getServer('config')->filePath('Config/install.sql'))->get();
+        $sql    =   $this->getService('file')->conn($this->getService('config')->filePath('Config/install.sql'))->get();
         $dbConfig   =   $structure->dbConfig($host,$port,$username,$password,$dbname,$key);
         $status =   $structure->setAdapterByConfig($dbConfig)->getAdapter()->query($sql, \Library\Db\Adapter\Adapter::QUERY_MODE_EXECUTE);
         //存储文件配置
@@ -74,7 +74,7 @@ class InstallController extends Controller
     }
     //创建local配置文件
     private function createConfigLocal($dsn, $username, $password,$dbname){
-        $this->getServer('config')->add('sys',str_replace('%s',$dbname,$dsn), $username, $password);
+        $this->getService('config')->add('sys',str_replace('%s',$dbname,$dsn), $username, $password);
     }  
     //获取数据库对象
     private function getSysTable($dsn,$username,$password){        

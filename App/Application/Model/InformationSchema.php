@@ -12,7 +12,7 @@ class InformationSchema extends Model{
     private $CurDbName;
     public function init() {}
     public function config($db){
-        $dbConfig           =   $this->getServer('config')->dbConfig->$db;
+        $dbConfig           =   $this->getService('config')->dbConfig->$db;
         $this->CurDbName    =   $this->getDbName($dbConfig);
         $dbConfig['dsn']    =   str_replace($this->CurDbName, 'INFORMATION_SCHEMA', $dbConfig['dsn']);
         $this->setAdapterByConfig($dbConfig);

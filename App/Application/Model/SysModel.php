@@ -10,14 +10,14 @@ use Application\Base\Model;
 class SysModel extends Model{
     
     protected function tplFormat(){
-        return $this->getServer('Tool\Tpl\TplFormat');
+        return $this->getService('Tool\Tpl\TplFormat');
     }
     protected function tableConfig(){
-        return $this->getServer('Tool\TableConfig');
+        return $this->getService('Tool\TableConfig');
     }
     //获取request对象
     protected function getRequest(){
-        return $this->getServer('request');
+        return $this->getService('request');
     }
     //获取列表页数据
     public function getIndexList($defaultNum=10){  
@@ -84,7 +84,7 @@ class SysModel extends Model{
             },$columnName,$columnVal);
             $where      =   array_column($wmap,'val','key');
         }
-        !empty($this->getServer('Model\ChildMenu')->getMenu()->attach) && $where[]    =     $this->getServer('Model\ChildMenu')->getMenu()->attach;        
+        !empty($this->getService('Model\ChildMenu')->getMenu()->attach) && $where[]    =     $this->getService('Model\ChildMenu')->getMenu()->attach;        
         if(!empty($sign)){
             $column     =   $this->tableConfig()->getColumnType('sign');
             if(!empty($column)){

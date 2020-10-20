@@ -47,7 +47,7 @@ class TableConfig extends Tool{
     //获取菜单id
     public function getMenuId(){
         if($this->menuId === NULL){
-            $this->menuId   =   $this->getServer('router')->getMenuId();
+            $this->menuId   =   $this->getService('router')->getMenuId();
         }
         return $this->menuId;
     }
@@ -63,12 +63,12 @@ class TableConfig extends Tool{
     }
     //获取dbServer
     public function getDBServer(){
-        return $this->getServer($this->getTable());
+        return $this->getService($this->getTable());
     }
     //获取表名
     public function getTable(){
         if(empty($this->table)){
-            $menu           =   $this->getServer('Model\ChildMenu')->getItem($this->getMenuId());
+            $menu           =   $this->getService('Model\ChildMenu')->getItem($this->getMenuId());
             if($menu->count()){
                 $this->table    =   $menu->table_name;
             }  else {
@@ -79,7 +79,7 @@ class TableConfig extends Tool{
     }
     public function InforSchema(){
         static $inforSchema =   NULL;
-        empty($inforSchema) &&  $inforSchema    =   $this->getServer('Model\InformationSchema')->config($this->getDBServer()->dbKey());
+        empty($inforSchema) &&  $inforSchema    =   $this->getService('Model\InformationSchema')->config($this->getDBServer()->dbKey());
         return $inforSchema;
     }
     //获取连表信息
@@ -224,7 +224,7 @@ class TableConfig extends Tool{
     //获取缓存配置
     public function getCacheConfig(){
         if( empty( $this->cacheConfig ) ){
-            $this->cacheConfig  =   $this->getServer('Model\CustomTableConfig')->getConfig($this->getMenuId(),$this->getDBServer()->getCompleteTableName());
+            $this->cacheConfig  =   $this->getService('Model\CustomTableConfig')->getConfig($this->getMenuId(),$this->getDBServer()->getCompleteTableName());
         }
         return $this->cacheConfig;
     }
@@ -291,7 +291,7 @@ class TableConfig extends Tool{
         $tableConfig->constraintList=   $this->getIndexKeyList();
         $tableConfig->config        =   $this->getCustomConfig();
         $tableConfig->columnList    =    Common::arrayResetKey(Common::arrUasort($this->getColumnList()->toArray(), 'sort'),'name');
-        $this->getServer('Model\CustomTableConfig')->editItem($this->getMenuId(),$tableConfig->toJson(),$this->getDBServer()->getCompleteTableName());
+        $this->getService('Model\CustomTableConfig')->editItem($this->getMenuId(),$tableConfig->toJson(),$this->getDBServer()->getCompleteTableName());
     }
     //添加配置
     public function addCacheConfig(){
@@ -299,7 +299,7 @@ class TableConfig extends Tool{
         $tableConfig->tableInfo     =   $this->getTableInfo();
         $tableConfig->constraintList=   $this->getIndexKeyList();
         $tableConfig->columnList    =   $this->getColumnList();
-        $this->getServer('Model\CustomTableConfig')->addItem($this->getMenuId(),$tableConfig->toJson(),$this->getDBServer()->getCompleteTableName());
+        $this->getService('Model\CustomTableConfig')->addItem($this->getMenuId(),$tableConfig->toJson(),$this->getDBServer()->getCompleteTableName());
     }
     public function getColumnType($type){
         if(empty($this->columnType)){

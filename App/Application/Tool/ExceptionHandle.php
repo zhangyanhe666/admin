@@ -11,7 +11,7 @@ class ExceptionHandle extends LibExceptionHandle{
 
     public function comment($k){
         try {
-            return $this->getServer('Tool\TableConfig')->getColumn($k)->get('comment',$k);   
+            return $this->getService('Tool\TableConfig')->getColumn($k)->get('comment',$k);   
         } catch (\Exception $exc) {
             return '';
         }

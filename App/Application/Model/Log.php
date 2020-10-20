@@ -12,7 +12,7 @@ class Log extends Model{
     
     public function write($content,$logname=''){
         $logname    =   $logname.date('Y-m-d').'.log';
-        $logpath    =   $this->getServer('config')->filePath('Log/'.$logname);
+        $logpath    =   $this->getService('config')->filePath('Log/'.$logname);
         $content    =   "[".date('Y-m-d H:i:s')."] ".$content."\n";
         file_put_contents($logpath, $content,FILE_APPEND);
     }

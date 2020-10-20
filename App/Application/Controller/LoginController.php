@@ -22,7 +22,7 @@ class LoginController extends Controller
     public function checkloginAction(){
         $username   =   $this->getRequest()->getPost('user');
         $passwd     =   User::password($this->getRequest()->getPost('pass'));
-        $userInfo   =   $this->getServer('Model\AdminUser')->login($username,$passwd);
+        $userInfo   =   $this->getService('Model\AdminUser')->login($username,$passwd);
         if(empty($userInfo)){
             return $this->responseError('用户名或密码错误');
         }elseif($userInfo->isdisable == 1){

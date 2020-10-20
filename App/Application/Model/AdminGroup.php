@@ -20,21 +20,21 @@ class AdminGroup extends SysModel{
             $gid        =   array_fill(0,count($map),$id);
             $menu_id    =   array_keys($map);
             $authority  =   array_values($map);
-            $status     =   $this->getServer('sys.sys_group_map')->batchInsert($column,array_map(null,$gid,$menu_id,$authority));
+            $status     =   $this->getService('sys.sys_group_map')->batchInsert($column,array_map(null,$gid,$menu_id,$authority));
             return $status;
         }
         return false;
     }
     public function delAuthMap($id){
-        $status     =   $this->getServer('sys.sys_group_map')->delete(array('gid'=>$id));
+        $status     =   $this->getService('sys.sys_group_map')->delete(array('gid'=>$id));
         return $status;
     }
     public function getGroupAuth($gid){
-        return $this->getServer('sys.sys_group_map')->where(array('gid'=>$gid))->getAll()->toArray();
+        return $this->getService('sys.sys_group_map')->where(array('gid'=>$gid))->getAll()->toArray();
     }
     //判断超级管理员
     public function isSuperAdmin($gid){
-        $hasAuth    =   $this->getServer('sys.sys_group_map')->where(array('gid'=>$gid))->count();
+        $hasAuth    =   $this->getService('sys.sys_group_map')->where(array('gid'=>$gid))->count();
         return !$hasAuth;
     }
     

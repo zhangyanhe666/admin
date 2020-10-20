@@ -32,30 +32,30 @@ class Controller extends LibController{
     }
     //当前菜单对象
     protected function getMenu(){
-        return $this->getServer('Model\ChildMenu')->getMenu();
+        return $this->getService('Model\ChildMenu')->getMenu();
     }
     //模板处理器对象
     protected function tplFormat(){
-        return $this->getServer('Tool\Tpl\TplFormat');
+        return $this->getService('Tool\Tpl\TplFormat');
     }
     //检测登陆
     protected function checkLogin(){
         if(!User::isLogin()){
             $url    =   $this->router()->url([],[],true);
-            $this->getServer('cookies')->set('referer',$url);
+            $this->getService('cookies')->set('referer',$url);
             $this->router()->toUrl(Router::$login);
         }
     }
     //检测安装
     protected function checkInstall(){
-        if($this->config()->dbConfig->count() == 0){
+        if($this->getService('dbConfig')->count() == 0){
             $this->router()->toUrl(Router::$install);
         }        
     }
     //检测权限
     protected function checkAuth($menuid=''){
         $menuid = empty($menuid) ? $this->router()->getMenuId() : $menuid;
-        if(!$this->getServer('Model\AdminUser')->auth($menuid)){
+        if(!$this->getService('Model\AdminUser')->auth($menuid)){
             $this->router()->toUrl(Router::$error,array('msg'=>'无权访问'));
         }
     }

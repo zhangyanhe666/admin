@@ -36,19 +36,19 @@ class AdminUser extends SysModel{
             $gid        =   array_fill(0,count($map),$id);
             $menu_id    =   array_keys($map);
             $authority  =   array_values($map);
-            $status     =   $this->getServer('sys.sys_user_map')->batchInsert($column,array_map(null,$gid,$menu_id,$authority));
+            $status     =   $this->getService('sys.sys_user_map')->batchInsert($column,array_map(null,$gid,$menu_id,$authority));
             return $status;
         }
         return false;
     }
     public function delAuthMap($id){
-        $status     =   $this->getServer('sys.sys_user_map')->delete(array('uid'=>$id));
+        $status     =   $this->getService('sys.sys_user_map')->delete(array('uid'=>$id));
         return $status;
     }
     
     //检测用户权限
     public function auth($menuId){
-        if($this->getServer('Model\AdminGroup')->isSuperAdmin(User::userInfo()->gid)){
+        if($this->getService('Model\AdminGroup')->isSuperAdmin(User::userInfo()->gid)){
             User::$isSuperAdmin =   TRUE;
             return TRUE; 
         }
@@ -56,10 +56,10 @@ class AdminUser extends SysModel{
         if(empty($menuId)){
             return true;
         }
-        if($this->getServer('Model\ChildMenu')->getItem($menuId)->parent_id == 0){
+        if($this->getService('Model\ChildMenu')->getItem($menuId)->parent_id == 0){
             return true;
         }
-        $action             =   $this->getServer('router')->getAction();
+        $action             =   $this->getService('router')->getAction();
         $actionAuth         =   Authority::actionAuth($action);
         $gwhere             =   
         $uwhere             =   array(
@@ -67,13 +67,13 @@ class AdminUser extends SysModel{
             "(authority & {$actionAuth}) = {$actionAuth}"
         );
         $gwhere['gid']      =   User::userInfo()->gid;
-        $gstatus            =   $this->getServer('sys.sys_group_map')->where($gwhere)->count();
+        $gstatus            =   $this->getService('sys.sys_group_map')->where($gwhere)->count();
         //为用户设定权限
         /*$uwhere['uid']      =   User::userInfo()->id;
-        $ustatus            =   $this->getServer('sys.sys_user_map')->where($uwhere)->count();*/
+        $ustatus            =   $this->getService('sys.sys_user_map')->where($uwhere)->count();*/
         return $gstatus;
     }
     public function getUserAuth($uid){
-        return $this->getServer('sys.sys_user_map')->where(array('uid'=>$uid))->getAll()->toArray();
+        return $this->getService('sys.sys_user_map')->where(array('uid'=>$uid))->getAll()->toArray();
     }
 }

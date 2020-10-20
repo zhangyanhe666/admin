@@ -26,8 +26,8 @@ class Structure extends SysModel{
         $sysTable   =   new \Library\Db\Adapter\Adapter($arr[$id]);
         $sysTable->getDriver()->getConnection()->connect();
         
-        $config     =   $this->getServer('config')->dbConfig->count() > 0 ? array_merge($this->getServer('config')->dbConfig->toArray(),$arr) : $arr;
-        $this->getServer('file')->conn($this->getServer('config')->dbConfigPath)->putByArr($config);
+        $config     =   $this->getService('config')->dbConfig->count() > 0 ? array_merge($this->getService('config')->dbConfig->toArray(),$arr) : $arr;
+        $this->getService('file')->conn($this->getService('config')->dbConfigPath)->putByArr($config);
         return $this;        
     }
     public function dbConfig($host,$port,$username,$password,$dbname,$key='',$charset='UTF8'){
@@ -45,9 +45,9 @@ class Structure extends SysModel{
          return $dbConfig;
     }
     public function saveDbConfig($id,$config){
-        $dbConfig   =   $this->getServer('config')->dbConfig->toArray();
+        $dbConfig   =   $this->getService('config')->dbConfig->toArray();
         $dbConfig[$id]  =   $config;
-        $this->getServer('file')->conn($this->getServer('config')->dbConfigPath)->putByArr($dbConfig);
+        $this->getService('file')->conn($this->getService('config')->dbConfigPath)->putByArr($dbConfig);
     }
     //检测数据库是否存在
     public function checkDbExist($dbname){

@@ -40,17 +40,17 @@ class VideoController extends PublicController
             ));
         }
 
-        if(!empty($this->getServer('Model\ChildMenu')->getMenu()->mem_url)){
+        if(!empty($this->getService('Model\ChildMenu')->getMenu()->mem_url)){
              Html::addTool('clearCache','清理缓存',array('exec'=>0));
         }
 
         $this->viewData()->setVariable('items', $this->selfTable()->getIndexList())//获取分页列表数据
-             ->setVariable('columnSwitch', $this->getServer('Model\Custom')->getMeans());//开关
+             ->setVariable('columnSwitch', $this->getService('Model\Custom')->getMeans());//开关
              //->addTpl('lib/list');
     }
 
     public function dom($url){
-        $html   =   $this->getServer('curl')->exec($url)->result();
+        $html   =   $this->getService('curl')->exec($url)->result();
         $html   =   str_replace('gb2312', 'utf-8', $html);
         $html   =   str_replace('<b>', '', $html);
         $html   =   iconv('GB2312', 'UTF-8//IGNORE', $html);
@@ -62,7 +62,7 @@ class VideoController extends PublicController
         set_time_limit(0);
         $url    =   $this->host.'/one/LLP/index.shtml';
         $list   =   $this->readList($url); 
-        $this->getServer('test.video')->batchInsert(['name','icon','s','playurl','unique_key'],$list);
+        $this->getService('test.video')->batchInsert(['name','icon','s','playurl','unique_key'],$list);
     }
     public function updateVideoAction(){
         set_time_limit(0);
@@ -73,7 +73,7 @@ class VideoController extends PublicController
         $urls   =   $this->getUrlPath($page, $page);  
         foreach ($urls as $url){
             $list   =   $this->readList($url);
-            $this->getServer('test.video')->batchInsert(['name','icon','s','playurl','unique_key'],$list);
+            $this->getService('test.video')->batchInsert(['name','icon','s','playurl','unique_key'],$list);
         }
     }
     public function readList($url){
@@ -116,7 +116,7 @@ class VideoController extends PublicController
                     $dom    =   $this->dom($playinfo);
                     $script =   $dom->getElementsByTagName('script')->item(8)->getAttribute('src');
                     $jsuri  =   $this->host.$script;
-                    $jsstr  =   $this->getServer('curl')->exec($jsuri)->result();
+                    $jsstr  =   $this->getService('curl')->exec($jsuri)->result();
                     preg_match('/\$xfplay(.*)\$xfplay/',$jsstr,$match);
                     if(!empty($match)){
                         $playurl    =  'xfplay'.$match[1];

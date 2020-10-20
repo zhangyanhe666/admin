@@ -15,7 +15,7 @@ class AdmingroupController extends PublicController
     public function addAction() {
         parent::addAction();
         $this->viewData()->setVariable('checkBoxTitle',  '数据库列表');
-        $this->viewData()->setVariable('checkBoxList',  $this->getServer('Model\ChildMenu')->getMenuList());
+        $this->viewData()->setVariable('checkBoxList',  $this->getService('Model\ChildMenu')->getMenuList());
         $this->viewData()->addTpl('lib/checkBoxList');
     }
     //编辑页
@@ -23,8 +23,8 @@ class AdmingroupController extends PublicController
         parent::editAction();
         $gid    =   $this->getRequest()->getQuery('id');
         $this->viewData()->setVariable('checkBoxTitle',  '数据库列表');
-        $this->viewData()->setVariable('checkBoxList',  $this->getServer('Model\ChildMenu')->getMenuList());
-        $this->viewData()->setVariable('checkedList', Authority::authSplit($this->getServer('Model\AdminGroup')->getGroupAuth($gid)));
+        $this->viewData()->setVariable('checkBoxList',  $this->getService('Model\ChildMenu')->getMenuList());
+        $this->viewData()->setVariable('checkedList', Authority::authSplit($this->getService('Model\AdminGroup')->getGroupAuth($gid)));
         $this->viewData()->addTpl('lib/checkBoxList');
     }
     //添加操作

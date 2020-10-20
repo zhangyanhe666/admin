@@ -26,19 +26,19 @@ class FtpController extends Controller
         $this->checkLogin();
         //检测权限
         $this->checkAuth();
-        $server     =   $this->getServer('sys.sys_ftp_config')->getItem($this->getRequest()->getQuery('server',1));
-        $this->getServer('ftp')->connect($server)->chdir($server->path);
+        $server     =   $this->getService('sys.sys_ftp_config')->getItem($this->getRequest()->getQuery('server',1));
+        $this->getService('ftp')->connect($server)->chdir($server->path);
     }
     //ftp首页
     public function indexAction() {
-        $this->viewData()->setVariable('servers',array_column($this->getServer('sys.sys_ftp_config')->getAll()->toArray(),'url','id'));
-        $this->viewData()->setVariable('ftp',$this->getServer('ftp'));
+        $this->viewData()->setVariable('servers',array_column($this->getService('sys.sys_ftp_config')->getAll()->toArray(),'url','id'));
+        $this->viewData()->setVariable('ftp',$this->getService('ftp'));
     }
     //获取文件列表
     public function fileListAction(){
         $items      =   array();
         $dir        =   $this->getRequest()->getQuery('dir','.');
-        $filelist   =   $this->getServer('ftp')->dirList($dir);
+        $filelist   =   $this->getService('ftp')->dirList($dir);
         if($dir == '.'){
             array_unshift($filelist, array('type'=>'dir','name'=>'.') );
         }
@@ -96,11 +96,11 @@ class FtpController extends Controller
     public function showTxtAction(){
         $file       =   $this->getRequest()->getQuery('filePath');
         $FilePath   =   $this->config()->filePath('Cache/Tmp/tmp.'.date('s'));
-        if($this->getServer('ftp')->size($file) == 0){
+        if($this->getService('ftp')->size($file) == 0){
             return $this->responseError('文件不存在或者是空文件');
         }else{
-            $this->getServer('ftp')->get($FilePath ,$file,FTP_BINARY);
-            return $this->responseSuccess(array('content'=>$this->getServer('file')->conn($FilePath)->get(),'url'=>$this->getServer('ftp')->config()->url.trim($file,'./')));
+            $this->getService('ftp')->get($FilePath ,$file,FTP_BINARY);
+            return $this->responseSuccess(array('content'=>$this->getService('file')->conn($FilePath)->get(),'url'=>$this->getService('ftp')->config()->url.trim($file,'./')));
         }
     }
     public function updateCdnAction(){
@@ -109,14 +109,14 @@ class FtpController extends Controller
         if(!empty($filePath)){
             $this->responseError('参数错误');
         }
-        $filePath   =   $this->getServer('ftp')->config()->url.trim($filePath,'./');
+        $filePath   =   $this->getService('ftp')->config()->url.trim($filePath,'./');
         if($type == 'dir'){
             $type   =   'Directory';
             $filePath   .=  '/';
         }else{
             $type   =   'File';
         }
-        if(!$this->getServer('Tool\Cdn')->updateCdn($filePath,$type)){
+        if(!$this->getService('Tool\Cdn')->updateCdn($filePath,$type)){
             $this->responseError('缓存更新失败');
         }
     }
@@ -124,7 +124,7 @@ class FtpController extends Controller
         $url    =   $this->getRequest()->getQuery('url');
         if(!empty($url)){
             $type  =   $url{strlen($url)-1} == '/' ? 'Directory' : 'File';
-            if($this->getServer('Tool\Cdn')->updateCdn($url,$type)){
+            if($this->getService('Tool\Cdn')->updateCdn($url,$type)){
                 return $this->responseSuccess();
             }else{
                 return $this->responseError('更新链接失败，请检查填写是否正确');
@@ -136,14 +136,14 @@ class FtpController extends Controller
     public function ftpmkdirAction(){
         $dirname    =   $this->getRequest()->getPost('dirname');
         $dir        =   $this->getRequest()->getPost('dir');
-        if(!$this->getServer('ftp')->mkdir($dir.'/'.$dirname)){
+        if(!$this->getService('ftp')->mkdir($dir.'/'.$dirname)){
             return $this->responseError('文件夹创建失败');
         }        
         return $this->responseSuccess();
     }
     public function uplodeimageAction(){
         $remote_file    =   $this->getRequest()->getQuery('dir').'/'.$this->getRequest()->getFiles('file')->name;
-        if(!@$this->getServer('ftp')->put($remote_file ,$this->getRequest()->getFiles('file')->tmp_name,FTP_BINARY)){
+        if(!@$this->getService('ftp')->put($remote_file ,$this->getRequest()->getFiles('file')->tmp_name,FTP_BINARY)){
             $error      =   error_get_last();
             $msg        =   '文件上传失败，'.$error['message'];
             return $this->responseError($msg);
@@ -152,7 +152,7 @@ class FtpController extends Controller
     public function deleteAction(){
         $filename       =   $this->getRequest()->getQuery('dir');
         $fun            =   $this->getRequest()->getQuery('type') == 'dir' ? 'rmdir' : 'delete';
-        if(!$this->getServer('ftp')->$fun($filename)){
+        if(!$this->getService('ftp')->$fun($filename)){
             return $this->responseError('删除操作失败');
         }  
         return $this->responseSuccess();
@@ -164,11 +164,11 @@ class FtpController extends Controller
         if($code == 'GBK'){
             $file  =   iconv('UTF-8','GBK',$file);
         }
-        $this->getServer('ftp')->get($FilePath ,$file,FTP_BINARY);
+        $this->getService('ftp')->get($FilePath ,$file,FTP_BINARY);
         Header("Accept-Ranges: bytes");
         Header("Accept-Length: ".filesize($FilePath));
         Header("Content-Disposition: attachment; filename=". basename($Ofile));
-        echo $this->getServer('file')->conn($FilePath)->get();
+        echo $this->getService('file')->conn($FilePath)->get();
         exit;
     }
 }

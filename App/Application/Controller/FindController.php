@@ -43,7 +43,7 @@ class FindController extends PublicController{
             'href'=>  $this->router()->url(array('control'=>'tableConfig','action'=>'edit'),array('menuId'=>$this->router()->getMenuId())),
             'target'=>'_blank'
         ));
-        if(!empty($this->getServer('Model\ChildMenu')->getMenu()->mem_url)){
+        if(!empty($this->getService('Model\ChildMenu')->getMenu()->mem_url)){
              Html::addTool('clearCache','清理缓存',array('exec'=>0));
         }
         
@@ -74,7 +74,7 @@ class FindController extends PublicController{
             'href'=>  $this->router()->url(array('control'=>'tableConfig','action'=>'edit'),array('menuId'=>0,'table'=>$this->tableConfig()->getTable())),
             'target'=>'_blank'
         ));
-        if(!empty($this->getServer('Model\ChildMenu')->getMenu()->mem_url)){
+        if(!empty($this->getService('Model\ChildMenu')->getMenu()->mem_url)){
              Html::addTool('clearCache','清理缓存',array('exec'=>0));
         }
         

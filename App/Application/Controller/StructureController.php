@@ -58,7 +58,7 @@ class StructureController extends Controller{
         $dsn        =   $this->getRequest()->getPost('dsn');
         $username   =   $this->getRequest()->getPost('username');
         $password   =   $this->getRequest()->getPost('password');
-        $this->getServer('Model\Structure')->addConfig($id,$dsn,$username,$password);
+        $this->getService('Model\Structure')->addConfig($id,$dsn,$username,$password);
     }
     
     //数据库比对
@@ -68,14 +68,14 @@ class StructureController extends Controller{
        
         $dbkeyA     =   $this->getRequest()->getQuery('dbkeyA');
         $dbkeyB     =   $this->getRequest()->getQuery('dbkeyB');
-        $dbA        =   $this->getServer('Model\InformationSchema')->config($dbkeyA)->getColumnAll();
-        $dbB        =   $this->getServer('Model\InformationSchema')->config($dbkeyB)->getColumnAll();
+        $dbA        =   $this->getService('Model\InformationSchema')->config($dbkeyA)->getColumnAll();
+        $dbB        =   $this->getService('Model\InformationSchema')->config($dbkeyB)->getColumnAll();
         $this->viewData()->setVariable('tablesA',Common::arrayCateKey(Common::arrayResetKey($dbA, 'name'),'tablename'));
         $this->viewData()->setVariable('tablesB',Common::arrayCateKey(Common::arrayResetKey($dbB, 'name'),'tablename'));
     }
     public function tablewordAction(){
         $id     =   $this->getRequest()->getQuery('id');
-        $dbA    =   $this->getServer('Model\InformationSchema')->config($id)->getColumnAll();
+        $dbA    =   $this->getService('Model\InformationSchema')->config($id)->getColumnAll();
         $dbA    =   Common::arrayCateKey($dbA,'tablename');
         $this->viewData()->setVariable('tablesA',$dbA);
     }
@@ -83,7 +83,7 @@ class StructureController extends Controller{
     public function tableListAction(){
         
              
-        $this->viewData()->setVariable('list',$this->getServer('Model\InformationSchema')->config($this->getRequest()->getQuery('id'))->getAllTables('CREATE_TIME DESC'));
+        $this->viewData()->setVariable('list',$this->getService('Model\InformationSchema')->config($this->getRequest()->getQuery('id'))->getAllTables('CREATE_TIME DESC'));
     }
     
 }

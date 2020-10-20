@@ -14,7 +14,7 @@ class TplTool extends \Application\Tool\Tool{
     public $judgeMap    =   array(0,1);
     private $hideColumns =   array();
     public function tableConfig(){
-        return $this->getServer('Tool\TableConfig');
+        return $this->getService('Tool\TableConfig');
     }
     public function setItem($item){
         $this->item =   $item;
@@ -64,7 +64,7 @@ class TplTool extends \Application\Tool\Tool{
     //跳转编辑类型
     public function toedit($value,$column){
         $url        =   $this->_url($value, $column);
-        $editUrl    =   !empty($url) ? $url : $this->getServer('router')->url(array('action'=>'edit'),array($column=>$value));
+        $editUrl    =   !empty($url) ? $url : $this->getService('router')->url(array('action'=>'edit'),array($column=>$value));
         $str        =   <<<TD
                 <a   href="{$editUrl}">{$value}</a>
 TD;
@@ -171,7 +171,7 @@ TD;
         $linkColumn =   $this->tableConfig()->getLinkTables()->{$column};
         $map        =   array();
         if($linkColumn){
-            $map    =    array_column($this->getServer($linkColumn->linkDb.'.'.$linkColumn->linkTable)
+            $map    =    array_column($this->getService($linkColumn->linkDb.'.'.$linkColumn->linkTable)
                                     ->where($param->where)->getAll()->toArray(),$linkColumn->linkValue,$linkColumn->linkColumn);
         } 
         !empty($param->map) && $map    =   $param->map+$map;
@@ -259,11 +259,11 @@ DIV;
                 $url   =   vsprintf($url, array_merge(array_flip($param->param),array_intersect_key($this->item,  array_flip($param->param))));
             }
         }elseif(!empty($param->menu)){
-                $uri    =   $param->menu == 'index' ? array('action'=>  $this->getServer('router')->getAction()) : $param->menu;
+                $uri    =   $param->menu == 'index' ? array('action'=>  $this->getService('router')->getAction()) : $param->menu;
                 $from   =   !empty($param->from) ? $param->from : $column;
                 $to     =   !empty($param->to) ? $param->to : $column;
                 $uriParam   =   array('fieldName[]'=>$to,'fieldVal[]'=>$this->item[$from],'isLike'=>1);
-                $url        =   $this->getServer('router')->url($uri,$uriParam);
+                $url        =   $this->getService('router')->url($uri,$uriParam);
         }
         return $url;
     }
@@ -383,7 +383,7 @@ DIV;
     //添加操作排序
     public function doAddsort($value,$column){
         //$column
-        $max    =   $this->getServer('Tool\DefaultTableServer')->db()->getColumn("max({$column})")+1;
+        $max    =   $this->getService('Tool\DefaultTableServer')->db()->getColumn("max({$column})")+1;
         return $max;
     }
     

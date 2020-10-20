@@ -29,12 +29,12 @@ class PublicController extends Controller{
         try {
             return  parent::onDispatch();
         } catch (\Exception $exc) {
-            $msg    = $this->getServer('exceptionhandle')->getMsg($exc);
+            $msg    = $this->getService('exceptionhandle')->getMsg($exc);
             return !$this->getRequest()->isAjax() ?  $this->router()->error($msg) : $this->responseError($msg);
         }
     }
     protected function tableConfig(){
-        return $this->getServer('Tool\TableConfig');
+        return $this->getService('Tool\TableConfig');
     }
     //配置自动匹配模板功能
     protected function template($tpl = '') {
@@ -53,7 +53,7 @@ class PublicController extends Controller{
     }
     //获取当前库中指定表对象
     public function selfModel($tableName){
-        return $this->getServer($this->selfTable()->dbKey().'.'.$tableName);
+        return $this->getService($this->selfTable()->dbKey().'.'.$tableName);
     }
     /***************
      * 对外Action
@@ -87,12 +87,12 @@ class PublicController extends Controller{
             ));
         }
 
-        if(!empty($this->getServer('Model\ChildMenu')->getMenu()->mem_url)){
+        if(!empty($this->getService('Model\ChildMenu')->getMenu()->mem_url)){
              Html::addTool('clearCache','清理缓存',array('exec'=>0));
         }
 
         $this->viewData()->setVariable('items', $this->selfTable()->getIndexList())//获取分页列表数据
-             ->setVariable('columnSwitch', $this->getServer('Model\Custom')->getMeans())//开关
+             ->setVariable('columnSwitch', $this->getService('Model\Custom')->getMeans())//开关
              ->addTpl('lib/list');
     }
     //缓存清理
@@ -120,7 +120,7 @@ class PublicController extends Controller{
             return $this->responseError('迁移失败,没有相应项目');
        }
        unset($item->id);
-       $this->getServer('wukong.'.$this->selfTable()->table)->insert((array)$item);
+       $this->getService('wukong.'.$this->selfTable()->table)->insert((array)$item);
        return $this->responseSuccess();
     }
     //保存单个列编辑信息
@@ -198,13 +198,13 @@ class PublicController extends Controller{
     public function columnSwitchAction(){
         $column =   $this->getRequest()->getQuery('column');
         $val    =   $this->getRequest()->getQuery('val');
-        return $this->getServer('Model\Custom')->editCustom($column,$val) ? $this->responseSuccess() : $this->responseError('添加失败');
+        return $this->getService('Model\Custom')->editCustom($column,$val) ? $this->responseSuccess() : $this->responseError('添加失败');
     }
     public function uploadExcelAction() {
         $excelFile      =   $this->getRequest()->getFiles('excel');
-        $this->getServer('excel')->setOutputEncoding('utf-8');
-        $this->getServer('excel')->read($excelFile->tmp_name);
-        $cells  =   $this->getServer('excel')->sheets[0]['cells'];
+        $this->getService('excel')->setOutputEncoding('utf-8');
+        $this->getService('excel')->read($excelFile->tmp_name);
+        $cells  =   $this->getService('excel')->sheets[0]['cells'];
         $columnMap  =   array_column($this->tableConfig()->getColumnList()->toArray(),'name','comment');
         $columnKey  =   array_shift($cells);
         $keyNum     =   count($columnKey);

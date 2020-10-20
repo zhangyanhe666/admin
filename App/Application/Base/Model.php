@@ -10,6 +10,13 @@ use Library\Db\Model as LibModel;
 use Application\Tool\Page;
 use Application\Tool\User;
 class Model extends LibModel{
+
+    public  $service;
+
+    public function __construct($service){
+        $this->service  =   $service;
+    }
+
     //初始化数据库对象
     public function init() {
         //如果model 中没有设置数据库会存在问题
@@ -22,12 +29,12 @@ class Model extends LibModel{
     //初始化数据库配置
     public function setAdapter($dbName) {
         $this->setDbKey($dbName);
-        return parent::setAdapterByConfig($this->getServer('config')->dbConfig->$dbName);
+        return parent::setAdapterByConfig($this->getService('config')->dbConfig->$dbName);
     }
 
     //缓存对象
     public function mem(){
-        return $this->getServer('memcache');
+        return $this->getService('memcache');
     }
     //缓存获取
     public function memGet(){
@@ -70,13 +77,13 @@ class Model extends LibModel{
     public function adminLog($sql) {
         $logTable   =   'sys.sys_log';
         try {            
-            if(!$this->getServer('request')->script()){
+            if(!$this->getService('request')->script()){
                 if($this->getCompleteTableName() != $logTable 
                         && !empty(User::userInfo()->id)){
                     $info['username']   = User::userInfo()->id;
                     $info['sqlStr']     = $sql;
                     $info['create_time']= date('Y-m-d H:i:s');
-                    $this->getServer($logTable)->insert($info);
+                    $this->getService($logTable)->insert($info);
                 }    
             }
         } catch (\Exception $exc) {

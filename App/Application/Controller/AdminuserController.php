@@ -15,7 +15,7 @@ class AdminUserController extends AdmingroupController
     public function editAction() {
         parent::editAction();
         $uid    =   $this->getRequest()->getQuery('id');
-        $this->viewData()->setVariable('checkList',  Authority::authSplit($this->getServer('Model\AdminUser')->getUserAuth($uid)) );
+        $this->viewData()->setVariable('checkList',  Authority::authSplit($this->getService('Model\AdminUser')->getUserAuth($uid)) );
   }
     public function doUsercenterAction(){        
         $this->selfTable()->edit($this->getRequest()->getPost('id'),$this->tplFormat()->doEdit());
@@ -25,7 +25,7 @@ class AdminUserController extends AdmingroupController
         $this->tableConfig()->getColumnList()->login_num['viewType'] =   'notUse';
         $this->tableConfig()->getColumnList()->group_id['viewType'] =   'notUse';
         $this->tableConfig()->getColumnList()->isdisable['viewType'] =   'notUse';
-        $this->viewData()->setVariable('submitAction',  $this->getServer('router')->url(array('action'=>'doUsercenter')));  
+        $this->viewData()->setVariable('submitAction',  $this->getService('router')->url(array('action'=>'doUsercenter')));  
         $this->viewData()->setVariable('item',  $item);
         $this->viewData()->addTpl('lib/edit');
     }

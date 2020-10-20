@@ -45,7 +45,7 @@ class ImgController extends Controller{
     }
     
     private function uploadToFtp($type,$tmp_name){
-        $ftp        =   $this->getServer('ftp')->connect($this->getServer('sys.sys_ftp_config')->getItem(7));
+        $ftp        =   $this->getService('ftp')->connect($this->getService('sys.sys_ftp_config')->getItem(7));
         $homePath   =   '/alidata/www/static2.wukongtv.com/';
         $homeUrl    =   'http://static2.wukongtv.com/';
         $path       =   'specialImage/'.date('Ym').'/';

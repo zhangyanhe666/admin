@@ -11,19 +11,19 @@ use Library\Application\Common;
 class DefaultTableServer extends Tool{
     public $menuId;
     public function init(){
-        $this->menuId   =   $this->getServer('router')->getMenuId();
+        $this->menuId   =   $this->getService('router')->getMenuId();
     }
     public function setMenuId($menuId){
         $this->menuId   =   $menuId;
         return $this;
     }
     public function db(){
-        $menu           =   $this->getServer('Model\ChildMenu')->getItem($this->menuId);
+        $menu           =   $this->getService('Model\ChildMenu')->getItem($this->menuId);
         if($menu->count()){
             $table    =   $menu->table_name;
         }  else {
             throw new \Exception('菜单配置错误');
         }        
-        return $this->getServer($table);
+        return $this->getService($table);
     }
 }

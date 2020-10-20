@@ -87,16 +87,16 @@ class SpecialnewController extends PublicController
         $this->viewData()->setVariable('special',$special);
         $this->viewData()->setVariable('share',json_encode($share));
         $this->viewData()->setVariable('tag',$special['tag']);
-        $content    =   $this->getServer('template')->template('lib/'.$this->specialTpl);
+        $content    =   $this->getService('template')->template('lib/'.$this->specialTpl);
         //上传专题到指定服务器
         $path       =   $this->config()->filePath('Cache/Tmp/tmp'.rand(0, 100));
         $serverFile =   "special/{$this->specialDir}/z_{$id}.html";
         $remote_file=   "/alidata/www/static1.wukongtv.com/web_yaokong/".$serverFile;
         file_put_contents($path, $content);
-        $server     =   $this->getServer('sys.sys_ftp_config')->getItem(4);
-        $this->getServer('ftp')->connect($server)->put($remote_file ,$path,FTP_BINARY);
+        $server     =   $this->getService('sys.sys_ftp_config')->getItem(4);
+        $this->getService('ftp')->connect($server)->put($remote_file ,$path,FTP_BINARY);
         //更新专题缓存
-        $this->getServer('Tool\Cdn')->updateCdn('http://static1.wukongtv.com/'.$serverFile);
+        $this->getService('Tool\Cdn')->updateCdn('http://static1.wukongtv.com/'.$serverFile);
     }
     public function getVidAction(){
         $source =   $this->getRequest()->getQuery('source');
