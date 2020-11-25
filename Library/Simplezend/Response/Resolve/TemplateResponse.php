@@ -13,17 +13,17 @@ class TemplateResponse  implements \Library\Response\ResponseInterface{
     public function __construct($service) {
         $this->service      =   $service;
     }
-    public function getServer($server,$useAlreadyExists=true){
-        return $this->service->get($server,$useAlreadyExists);
+    public function getService($service,$useAlreadyExists=true){
+        return $this->service->get($service,$useAlreadyExists);
     }
     public function getRequest(){
-        return $this->getServer('request');
+        return $this->getService('request');
     }
     public function router(){
-        return $this->getServer('router');
+        return $this->getService('router');
     }
     public function getResponseData(){
-        return $this->getServer('responseData');
+        return $this->getService('responseData');
     }
 
     /*

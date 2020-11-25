@@ -4,7 +4,7 @@
 <!--// 搜索部分-->
 <form class="form-inline" action="<?=$this->router()->url();?>" method="GET" role="form">
   <div class="form-group">
-      <?=$this->getServer('Tool\Tpl\TplFormat')->getSelectInput();?>
+      <?=$this->getService('Tool\Tpl\TplFormat')->getSelectInput();?>
   </div>
   <div class="form-group">
       <input type="button" value="+" onclick="admin.addSInput()" />
@@ -29,16 +29,16 @@
     <table class="table" style="white-space:nowrap">
     <tbody>
      <tr>
-         <?php foreach ($this->getServer('Tool\Tpl\TplFormat')->getMeans() as $k=>$v):?>
+         <?php foreach ($this->getService('Tool\Tpl\TplFormat')->getMeans() as $k=>$v):?>
          <th>
              <a href="<?=$this->router()->url(array(),array('order'=>$k,'sort'=>$v['sort']),TRUE)?>"><?=$v['name']?></a>
-             <?=$this->getServer('Tool\Tpl\TplFormat')->switchButton($k,  !isset($columnSwitch[$k]) ? 0 : 1);?></th>
+             <?=$this->getService('Tool\Tpl\TplFormat')->switchButton($k,  !isset($columnSwitch[$k]) ? 0 : 1);?></th>
          <?php endforeach;?>
         <th>操作</th>
      </tr>
      <?php if($items->count()>0): foreach ($items as $view) : ?>
      <tr class="tr-item" data-id="<?=$view->id?>" itemid="<?=$view->id?>">
-         <?=$this->getServer('Tool\Tpl\TplFormat')->index($view->getArrayCopy(),'td','td-handle');?>
+         <?=$this->getService('Tool\Tpl\TplFormat')->index($view->getArrayCopy(),'td','td-handle');?>
          <td>
          <?=\Application\Tool\Html::option($view->getArrayCopy());?>
          </td>
@@ -99,7 +99,7 @@ $('#_updateExcel').change(function(){
 $("#title").mousedown(admin.textMousedown);
 //拖动支持
 <?php
-if($this->getServer('Tool\TableConfig')->getColumnType('sort')):?>
+if($this->getService('Tool\TableConfig')->getColumnType('sort')):?>
 admin.nestable("<?=$this->router()->url(array('action'=>'sort'),array(),TRUE)?>");
 <?php endif;?>
 

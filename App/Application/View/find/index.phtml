@@ -4,7 +4,7 @@
         padding: 2px 3px;
         background: #f8faff;
         color: #7c9eb2;
-        width:<?=1600/(count($this->getServer('Tool\Tpl\TplFormat')->getMeans())+2)?>px;
+        width:<?=1600/(count($this->getService('Tool\Tpl\TplFormat')->getMeans())+2)?>px;
         float: left;
         height: 28px;
     }    
@@ -25,7 +25,7 @@
 <?php endif;?>
 <div class="overflowx">
 <div class="dd-handle" style="width:1600px;">
-    <?=  array_reduce($this->getServer('Tool\Tpl\TplFormat')->getMeans(), function($v1,$v2){
+    <?=  array_reduce($this->getService('Tool\Tpl\TplFormat')->getMeans(), function($v1,$v2){
         return $v1."<div class=\"ddl1\">{$v2['name']}</div>";
         })?><div class="ddl1" style="width:150px;">操作</div>
 </div>  
@@ -34,7 +34,7 @@
     <?php if(count($items)>0): foreach ($items as $view) : ?>
         <li class="dd-item" data-id="<?=$view['id']?>">
             <div class="dd-handle h-height">
-                <?=$this->getServer('Tool\Tpl\TplFormat')->index($view,'div','ddl1');?>              
+                <?=$this->getService('Tool\Tpl\TplFormat')->index($view,'div','ddl1');?>              
                 <div class="ddl1" style="line-height: 11px;width:150px;">                    
                 <?=\Application\Tool\Html::option($view);?>
                 </div>

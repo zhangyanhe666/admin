@@ -61,7 +61,7 @@ class Shumei extends SysModel{
 
     
     public function getComment($num=1000){
-        $res    =   $this->getServer('wukong.video_comment')->offset($this->offset)->limit($num)->getAll()->toArray();
+        $res    =   $this->getService('wukong.video_comment')->offset($this->offset)->limit($num)->getAll()->toArray();
         $this->offset   +=  $num;
         return $res;
     }

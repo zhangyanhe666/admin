@@ -6,7 +6,8 @@
  * and open the template in the editor.
  */
 namespace Application;
-use Application\Factory\ModelFactory;
+use Application\Model\ModelFactory;
+use Library\Application\Config;
 class Module{
     public $service;
     public $versionSwitch   =   true;  //版本开关
@@ -15,37 +16,37 @@ class Module{
     public function __construct($service) {
         $this->service  =   $service;
     }
-    public function getAutoloadConfig(){
-        return array(
-            'Library\Loader\StandardAutoloader' => array(
-                'namespaces' => array(
-                    __NAMESPACE__ => __DIR__,
-                    'xmpush' => realpath('./Library/Xmpush'),
-                ),
-            ),
-        );
+
+    public function init(){
+        // 初始化数据库
+        $dbConfigPath   =   $this->getService('config')->dbConfig;
+        if(empty($dbConfigPath)){
+            throw new \Exception("dbConfig can not null", 1);
+        }
+        $this->service->setServer('dbConfig',new Config(include_once $dbConfigPath));
     }
+
     //获取指定service
-    public function getServer($server,$useAlreadyExists=true){
+    public function getService($server,$useAlreadyExists=true){
         return $this->service->get($server,$useAlreadyExists);
     }
-    public function init(){
-        
+
+    public function getConfig(){
+        return include_once __Dir__.'/Config/application.php';
     }
-    public function getCustomService(){
-        $model  =   function($name){
-            $factory    =   new ModelFactory();
-            $model      =   $factory->createModel($this->service,$name);
-            return $model;
-        };
-        return $model;
+    public function getController($control){
+        return __NAMESPACE__.'\Controller\\'.$control.'Controller';
     }
+
     public function getServiceConfig(){
-        return array(
-            'instancesService'=>array(
+        return [
+            'instancesService'=>[
                 'router'=>'\Application\Tool\Router',
                 'exceptionhandle'=>'\Application\Tool\ExceptionHandle',
-            ),
-        );
+            ],
+            'customService'=>[
+                [new ModelFactory($this->service),'createModel']
+            ]
+        ];
     }
 }

@@ -62,7 +62,7 @@
                             <img class="nav-user-photo" src="/assets/avatars/user.jpg" alt="Jason's Photo">
                             <span class="user-info">
                                     <small>欢迎您,</small>
-                                    <?=Application\Tool\User::userInfo()->username?>
+                                    <?=$username?>
                             </span>
                             <i class="icon-angle-down"></i>
                         </a>
@@ -106,7 +106,7 @@
                                 <span class="menu-text"> 控制台</span>
                         </a>
                 </li>
-                <?=$this->getServer('Tool\Tpl\TplFormat')->menu();?>
+                <?=$menu?>
             </ul><!-- /.nav-list -->
 
                 <!-- #section:basics/sidebar.layout.minimize -->
@@ -116,14 +116,14 @@
 
                 <!-- /section:basics/sidebar.layout.minimize -->
                 <script type="text/javascript">
-                        //try{ace.settings.check('sidebar' , 'collapsed')}catch(e){}
+                        try{ace.settings.check('sidebar' , 'collapsed')}catch(e){}
                 </script>
         </div>
 
             <!-- /section:basics/sidebar -->
             <div class="main-content">
-                 <?=$this->template('lib/title');?>
-                 <?=$this->content;?>
+                 <?=$title;?>
+                 <?=$content;?>
             </div>
 
 
@@ -136,7 +136,7 @@
 <script type="text/javascript">
  window.jQuery || document.write("<script src='/assets/js/jquery1x.min.js'>"+"<"+"/script>");
  $(function(){
-     admin.menuOpen(<?=$this->getServer('Model\ChildMenu')->getMenu()->get('parent_id',1)?>);
+     admin.menuOpen(1);
  })
 </script>
 <![endif]-->

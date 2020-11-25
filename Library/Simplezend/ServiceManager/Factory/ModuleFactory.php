@@ -8,36 +8,28 @@
 namespace Library\ServiceManager\Factory;
 use Library\ServiceManager\Factory\FactoryInterface;
 use Library\Loader\Autoload;
+use Library\ServiceManager\ServiceManagerConfig;
 class ModuleFactory implements FactoryInterface{
     private $service;
     public function createService($serviceManager) {
-        $this->service  =   $serviceManager;
-        $moduleName     =   $this->loadModule();
-        $model          =   new $moduleName($serviceManager);
-        //配置service
-        if(method_exists($model, 'getServiceConfig')){
-            $serviceConfig  =   $model->getServiceConfig();
-            $serviceManager->setFactories(!isset($serviceConfig['factorices']) ? : $serviceConfig['factorices']);       
-            $serviceManager->setInstanceClasses(!isset($serviceConfig['instances']) ? : $serviceConfig['instances']);
-            $serviceManager->setInstanceService(!isset($serviceConfig['instancesService']) ? : $serviceConfig['instancesService']);
-        }
+        $config         =   $serviceManager->get('ApplactionConfig');
         //配置项目自动加载
-        if(method_exists($model, 'getAutoloadConfig')){
-            Autoload::factory($model->getAutoloadConfig());
+        if(isset($config['namespaces'])){
+            Autoload::factory( array(
+                    'Library\Loader\StandardAutoloader' => array(
+                        'namespaces' => $config['namespaces']
+                    ),
+                )
+            );
         }
+        if(!isset($config['module'])){
+            throw new \Exception("Error module not found", 1);
+        }
+        $model          =   new $config['module']($serviceManager);
+        $smConfig       =   $model->getServiceConfig();
+        (new ServiceManagerConfig($smConfig))->configureServiceManager($serviceManager);
         return $model;
     }
-    public function loadModule(){
-        $modulePath =   $this->getService()->get('config')->filePath('Module.php');
-        if(file_exists($modulePath)){
-            include_once $modulePath;
-        }else{
-            throw new \Exception('文件不存在:'.$modulePath);
-        }
-        return '\\'.$this->getService()->get('config')->project.'\Module';
-    }
-    public function getService(){
-        return $this->service;
-    }
+   
 }
 

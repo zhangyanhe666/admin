@@ -2,26 +2,21 @@
 <script type="text/javascript" src="/assets/js/dmuploader.min.js"></script> 
 <script src="/assets/js/jquery.nestable.min.js"></script>
 <!--// 搜索部分-->
-<form class="form-inline" action="<?=$this->router()->url();?>" method="GET" role="form">
-  <div class="form-group">
-      <?=$this->getServer('Tool\Tpl\TplFormat')->getSelectInput();?>
-  </div>
-  <div class="form-group">
+<form class="form-inline" action="<?=$this->getService('router')->url();?>" method="GET" role="form">
+  <!-- 搜索筛选框 -->
+  <div id='selectInput' class="form-group"></div>
+  <div id='checkInput' class="form-group">
       <input type="button" value="+" onclick="admin.addSInput()" />
-      <input type="checkbox" name="isLike" <?=$this->getRequest()->getQuery('isLike') == 1 ? 'checked="checked"' : ''?> value="1">完全匹配
-      <input type="checkbox" name="logic" <?=$this->getRequest()->getQuery('logic') == 'OR' ? 'checked="checked"' : ''?> value="OR">非关联匹配
-      <input type="checkbox" name="source" <?=$this->getRequest()->getQuery('source') == 1 ? 'checked="checked"' : ''?> value="1">按id查询
+      <!-- 条件复选框 -->
   </div>
   <div class="form-group">
-      <select name='page_num'>
-          <?=  \Library\Application\Common::option(array(10=>'10条',20=>'20条',50=>'50条',100=>'100条'),$items->page->countPerpage)?>
-      </select>
+      <select id='page_num' name='page_num'></select>
   </div>
+  <input type='hidden' name='menu_id' value='2'/>
   <button type="submit" class="btn btn-success btn-sm">查询</button>
 </form>
 <!--// 添加更新缓存部分-->
-<div  style="margin-top:5px;">
-<?= \Application\Tool\Html::Tool()?>
+<div id='tools' style="margin-top:5px;">
 </div>
 <!--// 列表部分部分-->
 
@@ -29,21 +24,22 @@
     <table class="table" style="white-space:nowrap">
     <tbody>
      <tr>
-         <?php foreach ($this->getServer('Tool\Tpl\TplFormat')->getMeans() as $k=>$v):?>
+         <?php foreach (array_values($listColumn) as $k=>$v):?>
          <th>
-             <a href="<?=$this->router()->url(array(),array('order'=>$k,'sort'=>$v['sort']),TRUE)?>"><?=$v['name']?></a>
-             <?=$this->getServer('Tool\Tpl\TplFormat')->switchButton($k,  !isset($columnSwitch[$k]) ? 0 : 1);?></th>
+             <a href="<?=$this->columnLink($k)?>" class="list-column" data-column="<?=$v['name']?>" data-val="<?=isset($closeColumn[$v['name']]) ? 1 :0;?>"><?=$v['comment']?></a>
+           </th>
          <?php endforeach;?>
         <th>操作</th>
      </tr>
-     <?php if($items->count()>0): foreach ($items as $view) : ?>
-     <tr class="tr-item" data-id="<?=$view->id?>" itemid="<?=$view->id?>">
-         <?=$this->getServer('Tool\Tpl\TplFormat')->index($view->getArrayCopy(),'td','td-handle');?>
+     <?php foreach ($list as $view) : ?>
+     <tr class="tr-item" data-id="<?=$view->id?>" >
+          <?php foreach($view as $v):?>
+          <td class="td-handle"><?=$v?></td>
+          <?php  endforeach; ?>
          <td>
-         <?=\Application\Tool\Html::option($view->getArrayCopy());?>
          </td>
      </tr>
-     <?php  endforeach;endif; ?>
+     <?php  endforeach; ?>
      </tbody>
      </table>
 </div>
@@ -54,42 +50,27 @@
     <div style='word-break:break-all;'><textarea id="showcom" style='word-break:break-all;width:100%;height: 311px;border:0px;'></textarea></div>
 </div>
 <script>
-admin.deleteUrl =   "<?=$this->router()->url(array('action'=>'delete'))?>";
-admin.editUrl   =   '<?= $this->router()->url(array('action'=>'doEditColumn'));?>';
-admin.columnSwitchUrl  =   '<?= $this->router()->url(array('action'=>'columnSwitch'));?>';
-
 $(function(){
-    
+
+admin.listColumn('.list-column');
+
+$('#page_num').append(admin.createOption({"10":"10条","20":"20条","50":"50条","100":"100条"},<?=$list->page->countPerpage?>));
+admin.listTdType  = <?=json_encode(array_column($listColumn,'viewType'))?>;
+admin.uri       = '<?=$this->getService('router')->setAction('')->setQuery([])->url();?>';
+admin.selectInput(<?=json_encode(array_column($listColumn, 'comment','name'))?>,
+                  <?=json_encode($this->query->get('fieldName',array(next($listColumn))));?>,
+                  <?=json_encode($this->query->get('fieldVal',array('')));?>);
+admin.tool(<?=json_encode($tools)?>);
+admin.listOptions(<?=json_encode($options)?>);
+admin.checkInput('isLike',1,'完全匹配')
+admin.checkInput('logic','OR','非关联匹配')
+admin.checkInput('source',1,'按id查询')
 admin.listInit();
 admin.signLine();
-$('#_updateExcel').change(function(){
-        if($(this).val()==''){
-            return false;
-        }        
-        $("#_updateForm").ajaxSubmit({ 
-            dataType:  'json', //数据格式为json 
-            success: function(data) {     
-                $('#over').hide();                
-                $('.file-progress').hide();
-                if(data.status=='Y'){
-                    alert('数据上传成功')
-                   window.location.reload();
-                }else{
-                    alert(data.msg);
-                }
-                
-            }
-        });
-        $(this).val('');
-});
+admin.upload()
 $("#title").mousedown(admin.textMousedown);
 //拖动支持
-<?php
-if($this->getServer('Tool\TableConfig')->getColumnType('sort')):?>
-admin.nestable("<?=$this->router()->url(array('action'=>'sort'),array(),TRUE)?>");
-<?php endif;?>
-
-
+<?php if(!isset($sort)):?>admin.nestable();<?php endif;?>
 })
 </script>
-<?=$this->template('lib/page')?>
+<?=$page?>

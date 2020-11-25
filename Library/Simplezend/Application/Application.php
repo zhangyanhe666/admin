@@ -7,36 +7,39 @@
 namespace Library\Application;
 use Library\ServiceManager\ServiceManager;
 use Library\ServiceManager\ServiceManagerConfig;
-use Library\Application\Common;
 class Application{
     /**
      * 入口文件类,需要做如下事情
      * 1.加载初始化配置
      * 2.执行启动程序
      */
-    public $serverManager;
+    public $serviceManager;
     //初始化App
-    public function __construct($serverManager) {
-        $this->serverManager    =   $serverManager;
+    public function __construct($serviceManager) {
+        $this->serviceManager    =   $serviceManager;
     }
     public static function init($config){
-        $serverManager    =   new ServiceManager(new ServiceManagerConfig($config));
-        return $serverManager->get('Application');
+
+        $smConfig           =   isset($config['service_manager']) ? $config['service_manager'] : array();
+        $serviceManager      =   new ServiceManager(new ServiceManagerConfig($smConfig));        
+        $serviceManager->setServer('ApplactionConfig', $config);
+        //设置线上模式
+        $serviceManager->get('error')->setOnline(false);
+        $serviceManager->get('module')->init();
+        return $serviceManager->get('Application');
     }
     //执行程序
     public  function run(){
         try {
-            //设置是否报错
-            $this->getServer('error')->setPhpError($this->getServer('config')->production);
-            Common::setTimeAnchor('start');
-            $control    =   $this->serverManager->get('controller');
-            $control->init();
-            $control->onDispatch()->result();
+            Timer::setTimeAnchor('start');
+            $this->getService('controller')->onDispatch()
+            ->display();
         } catch (\Exception $exc) {
-            $this->serverManager->get('exceptionhandle')->printMsg($exc);
+            // 此次需要设置开发环境限制，在开发环境下输出异常信息
+            $this->getService('exceptionhandle')->printMsg($exc);
         }   
     }
-    public function getServer($serverName){
-        return $this->serverManager->get($serverName);
+    public function getService($serverName){
+        return $this->serviceManager->get($serverName);
     }
 }

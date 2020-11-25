@@ -44,7 +44,7 @@ class Memcache{
         return $this->mem;
     }
     public function triggerMonitor($key,$monitor){
-        $monitor    =   \Library\Tool\ToolArray::merge(array($this->monitor), $monitor);
+        $monitor    =   array_merge(array($this->monitor), (array)$monitor);
         if(!empty($monitor)){
             foreach ($monitor as $m){
                 $data   =   $this->getMem()->get($m);

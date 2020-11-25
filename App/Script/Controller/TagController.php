@@ -13,8 +13,8 @@ class TagController extends BaseController{
     
     public function indexAction() {
         set_time_limit(0);
-        $screen     =   $this->getServer('Model\Video')->setDb('wukong')->getScreen();
-        while ($data    =   $this->getServer('Model\Video')->getVideo(10000)){
+        $screen     =   $this->getService('Model\Video')->setDb('wukong')->getScreen();
+        while ($data    =   $this->getService('Model\Video')->getVideo(10000)){
             $tagids     =   array();
             $wkids      =   array();
             foreach ($data as $v){
@@ -39,7 +39,7 @@ class TagController extends BaseController{
                 $wkids  = array_pad($wkids, count($tagids), $v['wkid']);
             }
             if(!empty($tagids)){
-                $this->getServer('Model\Video')->addScreen($tagids,$wkids);
+                $this->getService('Model\Video')->addScreen($tagids,$wkids);
             }
         }
     }

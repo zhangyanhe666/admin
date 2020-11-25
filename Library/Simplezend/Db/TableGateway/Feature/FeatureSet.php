@@ -9,7 +9,7 @@
 
 namespace Library\Db\TableGateway\Feature;
 
-use Library\Db\TableGateway\MyAbstractTableGateway;
+use Library\Db\TableGateway\AbstractTableGateway;
 
 class FeatureSet
 {
@@ -34,7 +34,7 @@ class FeatureSet
         }
     }
 
-    public function setTableGateway(MyAbstractTableGateway $tableGateway)
+    public function setTableGateway(AbstractTableGateway $tableGateway)
     {
         $this->tableGateway = $tableGateway;
         foreach ($this->features as $feature) {

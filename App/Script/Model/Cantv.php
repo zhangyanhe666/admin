@@ -25,23 +25,23 @@ class Cantv extends SysModel{
 
     //导入父分类信息
  /*   public function importVideoParentCategory(){
-        $types  =   $this->getServer('Model\CantvHttp')->videoParentCategory();
+        $types  =   $this->getService('Model\CantvHttp')->videoParentCategory();
         $ids    =   array_column($types,'id');
         $names  =   array_column($types,'name');
-        $this->getServer($this->getDefaultDb().'.can_category')->batchInsert1(array('id','name'),$ids,$names);
+        $this->getService($this->getDefaultDb().'.can_category')->batchInsert1(array('id','name'),$ids,$names);
     }*/
     //导入子分类信息
     public function importVideoCategory(){
         //获取父分类信息
         $msg    =   array();
-        $types  =   $this->getServer('Model\CantvHttp')->videoParentCategory();
+        $types  =   $this->getService('Model\CantvHttp')->videoParentCategory();
       //  var_dump($types);exit;
         foreach ($types as $type){
             try {                
-                $categorys  =   $this->getServer('Model\CantvHttp')->videoCategory($type['id']);
+                $categorys  =   $this->getService('Model\CantvHttp')->videoCategory($type['id']);
                 $ids        =   array_column($categorys,'id');
                 $names      =   array_column($categorys,'name');
-                $this->getServer($this->getDefaultDb().'.can_category')->batchInsert1(array('id','name','parent_id'),$ids,$names,$type['id']);
+                $this->getService($this->getDefaultDb().'.can_category')->batchInsert1(array('id','name','parent_id'),$ids,$names,$type['id']);
             } catch (\Exception $ex) {
                 $msg[]  =   $ex->getMessage();
             }
@@ -56,11 +56,11 @@ class Cantv extends SysModel{
         $types  =   $this->getVideoCategory(FALSE);
         $insertColumns  =   array('id');
         $updateColumns  =   array('name','image','currentNum','score','createDate','is_fee','typeID');
-        $canVideo       =   $this->getServer($this->getDefaultDb().'.can_video')->batchUpdate($updateColumns);
+        $canVideo       =   $this->getService($this->getDefaultDb().'.can_video')->batchUpdate($updateColumns);
         $insertColumns  =   array_merge($insertColumns,$updateColumns);
         foreach ($types as $type){
             $pageNumber =   1;
-            while ($videos     =   $this->getServer('Model\CantvHttp')->videoByCategory($type['id'],$type['parent_id'],$pageNumber,$pageSize)){
+            while ($videos     =   $this->getService('Model\CantvHttp')->videoByCategory($type['id'],$type['parent_id'],$pageNumber,$pageSize)){
                 $list       =   array();
                 $category   =   array();
                 foreach ($videos as $v){
@@ -83,12 +83,12 @@ class Cantv extends SysModel{
         $pageSize   =   10;
         $insertColumns  =   array('id');
         $updateColumns  =   array('classname','zone','director','actor','language','releaseDate','information','playcount','showtype');
-        $canVideo       =   $this->getServer($this->getDefaultDb().'.can_video')->batchUpdate($updateColumns);
+        $canVideo       =   $this->getService($this->getDefaultDb().'.can_video')->batchUpdate($updateColumns);
         $insertColumns  =   array_merge($insertColumns,$updateColumns);
         while ($videos     =   $this->getVideo($pageNumber,$pageSize)){
             $list       =   array();
             foreach ($videos as $v){
-                $video      =   $this->getServer('Model\CantvHttp')->videoInfo($v['id']);
+                $video      =   $this->getService('Model\CantvHttp')->videoInfo($v['id']);
                 if(!empty($video)){
                     $list[]     =   $this->getDate($video, $insertColumns);
                 }
@@ -101,10 +101,10 @@ class Cantv extends SysModel{
     }
     
     public function importLive(){
-        $lives  =   $this->getServer('Model\CantvHttp')->liveList();
+        $lives  =   $this->getService('Model\CantvHttp')->liveList();
         $insertColumns  =   array('channelId','name','playurl','icon');
         $apiColumns     =   array('channelId','channelName','m3u8Url','logo');
-        $liveService    =   $this->getServer($this->defaultDb.'.can_live');
+        $liveService    =   $this->getService($this->defaultDb.'.can_live');
         foreach ($lives as $v){
             $list[]     =   $this->getDate($v, $apiColumns);
         }
@@ -120,7 +120,7 @@ class Cantv extends SysModel{
     }
     public function getVideo($page,$pageNum=100){
         $start  =   $page * $pageNum;
-        return $this->getServer($this->getDefaultDb().'.can_video')->offset($start)->limit($pageNum)->getAll()->toArray();
+        return $this->getService($this->getDefaultDb().'.can_video')->offset($start)->limit($pageNum)->getAll()->toArray();
     }
 
     //获取影视分类
@@ -131,7 +131,7 @@ class Cantv extends SysModel{
         }else{
             $where[]    =   'parent_id != 0';
         }
-        $types  =   $this->getServer($this->getDefaultDb().'.can_category')->where($where)->getAll()->toArray();
+        $types  =   $this->getService($this->getDefaultDb().'.can_category')->where($where)->getAll()->toArray();
         return $types;
     }
     

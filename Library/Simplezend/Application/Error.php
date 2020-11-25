@@ -10,7 +10,13 @@ namespace Library\Application;
 
 class Error{
     
-    public function setPhpError($status = false){
+    /**
+     * 设置线上模式
+     * @Author   zhangyanhe
+     * @DateTime 2020-05-11
+     * @param    boolean    $status [description]
+     */
+    public function setOnline($status = false){
         if (!$status) {            
             error_reporting(E_ALL);
             ini_set('display_errors', 'On');

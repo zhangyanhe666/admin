@@ -18,19 +18,19 @@ class Push extends Model{
         $where['tonight.starttime']     =   $starttime;
         $where['tonight.switch']        =   1;
         $where[]                =   "'{$time}' > tonight.online and '{$time}' < tonight.offline and find_in_set({$n},tonight.week) and ver >= 304";
-        $items                  =   $this->getServer('wukong.tonight')->join(array('b'=>'subscribe'),'tonight.id=b.show_id',array('user_id'))
+        $items                  =   $this->getService('wukong.tonight')->join(array('b'=>'subscribe'),'tonight.id=b.show_id',array('user_id'))
                                     ->join(array('c'=>'wk_user'),'b.user_id=c.user_id',array('realId','dev'))
                                     ->where($where)->getAll()->toArray();
         return $items;
     }
     public function toPush($title,$realId,$desc,$playload,$dev){
-        $this->getServer('wukong.impush')->batchInsert1(array('title','realId','desc','playload','dev'),$title,$realId,$desc,$playload,$dev);
+        $this->getService('wukong.impush')->batchInsert1(array('title','realId','desc','playload','dev'),$title,$realId,$desc,$playload,$dev);
     }
     public function getPush(){
-        return $this->getServer('wukong.impush')->where(array('ispush'=>0))->getAll()->toArray();
+        return $this->getService('wukong.impush')->where(array('ispush'=>0))->getAll()->toArray();
     }
     public function updatePush($id,$result){
-        return $this->getServer('wukong.impush')->update(array('ispush'=>1,'result'=>$result),array('id'=>$id));
+        return $this->getService('wukong.impush')->update(array('ispush'=>1,'result'=>$result),array('id'=>$id));
     }
     
     private function dateFormat($date){

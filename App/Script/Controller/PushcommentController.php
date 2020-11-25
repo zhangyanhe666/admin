@@ -65,7 +65,7 @@ class PushcommentController extends Controller{
     }
     public function pushscriptAction(){
         $targetMessageList  =   array();
-        $commentList        =   $this->getServer('Model\Comment')->commentList();
+        $commentList        =   $this->getService('Model\Comment')->commentList();
         if(!empty($commentList)){
             foreach ($commentList as $v){
                 if($v['dev'] == 'ios'){
@@ -134,14 +134,14 @@ class PushcommentController extends Controller{
         $starttime  =   date('H:i',time() + 600);
         $n      =   date('N');
         $nowtime   =   time();
-        $items  =   $this->getServer('wukong.tonight')->where(array('starttime'=>$starttime,"'{$time}' > online and '{$time}' < offline",'switch'=>1,"find_in_set({$n},week)"))->getAll()->toArray();
+        $items  =   $this->getService('wukong.tonight')->where(array('starttime'=>$starttime,"'{$time}' > online and '{$time}' < offline",'switch'=>1,"find_in_set({$n},week)"))->getAll()->toArray();
         if(!empty($items)){
             $showids    =   array_column($items,'id');
-            $subscribe  =   $this->getServer('wukong.subscribe')->where(array('show_id'=>$showids))->getAll()->toArray();
+            $subscribe  =   $this->getService('wukong.subscribe')->where(array('show_id'=>$showids))->getAll()->toArray();
             if(!empty($subscribe)){
                 $data   =   Common::arrayResetKey($items, 'id');
                 foreach ($subscribe as $v){
-                    $this->getServer('wukong.push_comment')->insert(array('touser_id'=>$v['user_id'],
+                    $this->getService('wukong.push_comment')->insert(array('touser_id'=>$v['user_id'],
                         'content'=>  json_encode($data[$v['show_id']])
                         ,'create_time'=>date('Y-m-d H:i:s')));
                 }
@@ -150,7 +150,7 @@ class PushcommentController extends Controller{
     }
     
     public function pushsubscribeAction(){
-        $commentList        =   $this->getServer('Model\Comment')->subcribe();
+        $commentList        =   $this->getService('Model\Comment')->subcribe();
         if(!empty($commentList)){
             foreach ($commentList as $v){
                 $vcontent    =   json_decode($v['content'],TRUE);
@@ -174,7 +174,7 @@ class PushcommentController extends Controller{
         $realId    = $this->getRequest()->getQuery('realId');
         $showId    = $this->getRequest()->getQuery('showId');
         $dev        =   $this->getRequest()->getQuery('dev');
-        $showName   =   $this->getserver('wukong214.tonight')->where(array('id'=>$showId))->getColumn('showname');
+        $showName   =   $this->getService('wukong214.tonight')->where(array('id'=>$showId))->getColumn('showname');
         $title      =   '预约通知';
         $content    =   "您预约\"{$showName}\"将在10分钟后开始";
         $payload    =   "wukongtv://main?showid=".$showId;
@@ -221,7 +221,7 @@ class PushcommentController extends Controller{
         
         echo "预约推送开始:".date('Y-m-d H:i:s')."\n";
         $count      =   0;
-        $subscribe  =   $this->getServer('Model\Push')->getSubscribe();
+        $subscribe  =   $this->getService('Model\Push')->getSubscribe();
         if(!empty($subscribe)){
             //消息中心入库
             //消息存储到消息中心
@@ -243,7 +243,7 @@ class PushcommentController extends Controller{
 
             $count  =   count($subscribe);
             //推送消息入库
-            $this->getServer('Model\Push')->toPush($title,$realId,$desc,$payload,$dev);
+            $this->getService('Model\Push')->toPush($title,$realId,$desc,$payload,$dev);
         }
         echo "预约推送结束：".date('Y-m-d H:i:s').";总推送条数：($count)\n";
     }
@@ -251,7 +251,7 @@ class PushcommentController extends Controller{
     public function pushToIm(){
         echo "单条推送开始:".date('Y-m-d H:i:s')."\n";
         $count      =   0;
-        $pushList   =   $this->getServer('Model\Push')->getPush();
+        $pushList   =   $this->getService('Model\Push')->getPush();
         if(!empty($pushList)){
             foreach ($pushList as $im){
                 //消息推送
@@ -278,7 +278,7 @@ class PushcommentController extends Controller{
                         $result =   $this->androidSender()->send($builder,$im['realId']);
                         break;
                 }
-                $this->getServer('Model\Push')->updatePush($im['id'],$result);
+                $this->getService('Model\Push')->updatePush($im['id'],$result);
             }
             $count  =   count($pushList);
         }

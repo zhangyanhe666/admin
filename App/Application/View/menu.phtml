@@ -1,0 +1,25 @@
+<?php if(empty($menuList)){
+	return '';
+}?>
+<?php foreach($menuList as $menu):?>
+    <?php if(!isset($menu['childList'])) continue;?>
+<li class="hsub"  id="menu-<?=$menu['id']?>">
+    <a  href="javascript:void(0);" class="dropdown-toggle">
+        <i class="menu-icon fa fa-pencil-square-o"></i>
+        <span class="menu-text"><?=$menu['name']?></span>
+        <b class="arrow icon-angle-down"></b>
+    </a>
+    <b class="arrow"></b>
+    <ul class="submenu">
+         <?php foreach ($menu['childList'] as $v):?>
+                <li>
+                <a href="<?php echo $this->menuLink($v['action'],$v['id']);?>">
+                 <i class="icon-double-angle-right"></i>
+                <?=$v['name']?>
+                <br><span style="color:red"><?=$v['person_in_charge']?></span>
+                </a>
+                </li> 
+        <?php endforeach;?>
+    </ul>
+</li>
+<?php endforeach;?>

@@ -32,10 +32,10 @@ class ActivityController extends Controller{
         //获取所有在线活动        
         $w['switch']    =   0;
         $w[]            =   'start_time < now() and end_time > now()';
-        $activitys      =   $this->getServer('wukong.activity')->where($w)->getAll();
+        $activitys      =   $this->getService('wukong.activity')->where($w)->getAll();
         if(!empty($activitys)){
             foreach ($activitys as $v){
-                $this->getServer('wukong.activity_user')->update(array('shared'=>0,'isVarifi'=>0,'extract_num'=>$v['extract_num']),array('act_id'=>$v['id']));
+                $this->getService('wukong.activity_user')->update(array('shared'=>0,'isVarifi'=>0,'extract_num'=>$v['extract_num']),array('act_id'=>$v['id']));
             }
         }
         echo '脚本共执行（'.count($activitys).'）条数据';
@@ -44,10 +44,10 @@ class ActivityController extends Controller{
         //获取所有在线活动        
         $w['switch']    =   0;
         $w[]            =   'start_time < now() and end_time > now()';
-        $activitys      =   $this->getServer('wukong214.activity')->where($w)->getAll();
+        $activitys      =   $this->getService('wukong214.activity')->where($w)->getAll();
         if(!empty($activitys)){
             foreach ($activitys as $v){
-                $this->getServer('wukong214.activity_user')->update(array('shared'=>0,'isVarifi'=>0,'extract_num'=>$v['extract_num']),array('act_id'=>$v['id']));
+                $this->getService('wukong214.activity_user')->update(array('shared'=>0,'isVarifi'=>0,'extract_num'=>$v['extract_num']),array('act_id'=>$v['id']));
             }
         }
         echo '脚本共执行（'.count($activitys).'）条数据';

@@ -6,57 +6,175 @@
  * and open the template in the editor.
  */
 namespace Library\Application;
-
+/**
+ * 路由类
+ */
 class Router{
+    /**
+     * [$control 控制器名]
+     * @var [string]
+     */
     public $control;
+    /**
+     * [$action 方法名]
+     * @var [string]
+     */
     public $action;
-    public $controlName;
+
+    /**
+     * [$service 服务管理者]
+     * @var [serviceManager]
+     */
     public $service;
-    public $route;
+
+    /**
+     * [$query 路由查询条件]
+     * @var array
+     */
+    public $query=[];
+    /**
+     * [$requestQuery 请求的查询条件]
+     * @var [type]
+     */
+    public $requestQuery;
+
+    /**
+     * router类初始化
+     * @Author   zhangyanhe
+     * @DateTime 2020-10-14
+     * @param    [type]     $serviceManager [description]
+     */
     public function __construct($serviceManager) {
         $this->service  =   $serviceManager; 
-        $uri            =   trim($this->getServer('request')->getUri(),'/');
-        $project        =   $this->getServer('config')->project;
-        $uri            =   strpos(strtolower($uri), strtolower($project)) === 0 ? substr($uri,strlen($project)+1) : $uri;
-        list($this->control,$this->action)          =   array_filter(explode('/', $uri)) + array($this->getServer('config')->router['control'],$this->getServer('config')->router['action']);
+        $this->requestQuery    =   $this->getService('request')->getQuery()->toArray();
+        $this->initRouter();
     }
-    public function getServer($serviceName){
+
+    /**
+     * 初始化路由
+     * @Author   zhangyanhe
+     * @DateTime 2020-10-14
+     * @return   [type]     [description]
+     */
+    public function initRouter(){
+        $router     =   array_values(
+                                array_filter(
+                                    explode('/', $this->getService('request')->getUri())
+                                ));
+        list($this->control,$this->action)  =   $router + $this->getService('config')->router->toArray();
+    }
+
+    /**
+     * 获取服务对象
+     * @Author   zhangyanhe
+     * @DateTime 2020-10-14
+     * @param    [type]     $serviceName [description]
+     * @return   [type]                  [description]
+     */
+    public function getService($serviceName){
         return $this->service->get($serviceName);
     }
+
+    /**
+     * 获取control
+     * @Author   zhangyanhe
+     * @DateTime 2020-10-14
+     * @return   [type]     [description]
+     */
     public function getControl(){
         return $this->control;
     }
+
+    /**
+     * 获取action
+     * @Author   zhangyanhe
+     * @DateTime 2020-10-14
+     * @return   [type]     [description]
+     */
     public function getAction(){
         return $this->action;
     }
-    //生成uri
-    public function buildUri($uri=array()){
-        if(!is_array($uri)){
-            return  $uri;
-        }        
-        $project    =   isset($uri['project']) ? $uri['project'] : '';
-        $control    =   !isset($uri['control']) ? $this->control : $uri['control'];
-        $action     =   !isset($uri['action']) ? $this->getAction() : $uri['action'];
-        return implode('/', array_filter(array($project,$control,$action)));
+
+    /**
+     * 获取路由uri
+     * @Author   zhangyanhe
+     * @DateTime 2020-10-14
+     * @return   [type]     [description]
+     */
+    public function getUri(){
+        $uri    =   '/'.$this->getControl().'/'.$this->getAction();
+        $this->initRouter();
+        return $uri;
     }
+
+    /**
+     * 获取路由url
+     * @Author   zhangyanhe
+     * @DateTime 2020-10-14
+     * @return   [type]     [description]
+     */
+    public function getUrl(){
+        return $this->getService('request')->host.$this->getUri();
+    }
+
+    /**
+     * 设置路由控制器
+     * @Author   zhangyanhe
+     * @DateTime 2020-10-14
+     * @param    [type]     $control [description]
+     */
+    public function setControl($control){
+        $this->control  =   $control;
+        return $this;
+    }
+
+    /**
+     * 设置路由方法名
+     * @Author   zhangyanhe
+     * @DateTime 2020-10-14
+     * @param    [type]     $action [description]
+     */
+    public function setAction($action){
+        $this->action   =   $action;
+        return $this;
+    }
+
     public function error($msg){
-        if(!$this->getServer('config')->production){
+        if(!$this->getService('config')->production){
             echo $msg;exit;
         }
-        $this->toUrl($this->getServer('config')->error,array('msg'=>$msg));
+        $this->toUrl($this->getService('config')->error,array('msg'=>$msg));
     }
-    //生成url
-    public function url($uri=array(),$param=array(),$useQuery=false){
-        $url    =   $this->getServer('request')->host.'/'.trim($this->buildUri($uri),'/');
-        if(!is_array($param)){
-            throw new \Exception('param需要是数组类型');
+
+    /**
+     * 设置查询条件
+     * @Author   zhangyanhe
+     * @DateTime 2020-10-14
+     * @param    [type]     $query [查询参数]
+     * @param    boolean    $cover [是否覆盖]
+     */
+    public function setQuery($query,$cover=false){
+        $this->query  =   $cover ? array_merge($this->requestQuery,$query) :    $query;
+        return $this;
+    }
+
+    /**
+     * 获取路由url
+     * @Author   zhangyanhe
+     * @DateTime 2020-10-14
+     * @return   [type]     [description]
+     */
+    public function url(){
+        $url    =   $this->getUrl();
+        if(!empty($this->query)){
+            $url    .=   '?'.http_build_query($this->query);
         }
-        $query  =   $useQuery   ?   $this->getServer('request')->queryString($param) :   http_build_query($param);
-        return  !empty($query) ? $url.'?'.$query : $url;
+        return $url;
     }
+
     public function referer($uri=array()){
         $uri        =   empty($uri) ? array('action'=>'index'): $uri;
-        $referer    =   $this->getServer('request')->getQuery('url',getenv('HTTP_REFERER'));
+        $referer    =   $this->getService('request')->getQuery('url',getenv('HTTP_REFERER'));
         empty($referer) && ($referer = $this->url($uri));
         return $referer;
     }

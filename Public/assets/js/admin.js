@@ -1,5 +1,7 @@
 (function(window){
     var admin      =   {};
+    admin.list =   {};
+
     admin.menuOpen  =   function(parentid){
         $('#menu-'+parentid).addClass('open');
         $('#menu-'+parentid).children('ul').addClass('nav-show');
@@ -7,13 +9,62 @@
         $('#menu-'+parentid).parents('.submenu').show();
         $('#menu-'+parentid).parents('.submenu').addClass('nav-show');
     };
+    admin.get       =   function(k){
+        var reg = new RegExp("(^|&)"+ encodeURIComponent(k) +"=([^&]*)(&|$)");
+        var r = window.location.search.substr(1).match(reg);
+        if(r!=null)return  unescape(r[2]); return null;
+    }
     admin.down      =   function(){
         var tag     =   window.location.search.indexOf("?") > -1 ? '&' :  '?';  
         var origin  =   window.location.origin;
         var pathname=   window.location.pathname.replace(/(\/$)/,'').replace(/(\/index$)/,'');
         var search  =   window.location.search;
         window.location.href    =   origin+pathname+'/down'+search+tag+'downcode='+$('#downcode').val();
+    };
+
+    admin.checkInput    =   function (name,value,text){
+        check  =   admin.get(name) == value ? 'checked="checked"' : '';
+        $('#checkInput').append('<input type="checkbox" name="'+name+'"  '+check+' value=\"'+value+'"/>'+text);
     }
+    admin.createOption  =   function(optionList,defaultVal){
+        var optionLabel   = '';
+        for(o in optionList){
+            selected    =   o == defaultVal  ? 'selected' : "";
+            optionLabel     +=  '<option value="'+o+'" '+selected+'>'+optionList[o]+'</option>';
+        }
+        return optionLabel;
+    }
+    admin.selectInput   =   function(option,fieldName,columnVal){
+        var delButton     = '<span class="btn " style="margin-top:0px;margin-left: -30px;padding:1px 6px; " onclick="$(this).parent().remove()">-</span>';
+        for(i in fieldName){
+            var optionList      = admin.createOption(option,fieldName[i]);
+            var delButton     = i == 0 ? '' : '<span class="btn " style="margin-top:0px;margin-left: -30px;padding:1px 6px; " onclick="$(this).parent().remove()">-</span>';
+            var selectInput   = '<div class="selectDiv" style="width:auto;float:left;"><select id="sel" style="width:auto;float:left;" name="fieldName[]">'+optionList+'</select><input style="width:auto;" type="text" class="form-control" id="" value="'+columnVal[i]+'" name="fieldVal[]" placeholder="">'+delButton+'</div>'
+            $('#selectInput').append(selectInput);
+        }
+    }
+    admin.upload    =   function(){
+        $('#_updateExcel').change(function(){
+                if($(this).val()==''){
+                    return false;
+                }        
+                $("#_updateForm").ajaxSubmit({ 
+                    dataType:  'json', //数据格式为json 
+                    success: function(data) {     
+                        $('#over').hide();
+                        $('.file-progress').hide();
+                        if(data.status=='Y'){
+                            alert('数据上传成功')
+                            window.location.reload();
+                        }else{
+                            alert(data.msg);
+                        }
+                        
+                    }
+                });
+                $(this).val('');
+        });
+    };
     admin.addSInput =   function(){
         var str     =   '<span class="btn " style="margin-top:0px;margin-left: -30px;padding:1px 6px; " onclick="$(this).parent().remove()">-</span>';
         var formgroup   =   $('.form-group').eq(0);
@@ -29,12 +80,9 @@
         if(!confirm('你确认删除该项吗')){
             return false;
         }
-        if(!admin.deleteUrl){
-            alert('删除失败联系管理员');
-            return false;
-        }
+
         $.ajax({
-            url:admin.deleteUrl, 
+            url:admin.uri+'delete', 
             data:'id='+id,
             type:"GET",
             success:function(data){
@@ -47,6 +95,56 @@
                 }
             },
         })
+    }
+    admin.listOptions   =   function(opt){
+        var options   =   {"edit":"编辑","copy":"复制","delete":"删除","transfer":"迁移到线上"};
+
+        $('table .tr-item').each(function(){
+          for(a in opt){
+              var attr  = {
+                class:"btn  btn-sm",
+                onclick:"admin.operationItem('"+opt[a]+"',"+$(this).data('id')+")",
+              };
+              var button  = $('<a>'+options[opt[a]]+'</a>').attr(attr);
+              $(this).children(':last').append(button);
+          }
+
+        });
+    }
+
+    admin.operationItem     =   function(type,id){
+          var uri   = admin.uri+type+'?id='+id;
+          switch(type){
+            case 'edit':
+            case 'copy':
+              location.href = uri;
+              break;
+            case 'transfer':
+              admin.execurl(uri,0);
+              break;
+            case 'delete':
+              admin.deleteItem(id);
+              break;
+          }
+    
+    }
+
+    admin.tool      =   function(toolList){
+        var tools   = {"down":"<select id=\"downcode\">\
+                                  <option value=\"utf8\">utf8</option>\
+                                  <option value=\"gbk\">gbk</option>\
+                              </select><a class=\"btn btn-primary btn-sm\" onclick=\"admin.down()\">csv下载</a>",
+                      "upload":"<form id=\"_updateForm\" style='display: none;'  action=\"uploadExcel\" method=\"post\" enctype=\"multipart/form-data\">\
+                                    <input type=\"file\" name=\"excel\" id=\"_updateExcel\" style=\"display:none;\">\
+                                </form>\
+                                <a class=\"btn btn-primary btn-sm\" onclick=\"$('#_updateExcel').click()\">数据上传</a>",
+                      "add":"<a class=\"btn btn-primary btn-sm\" href=\""+admin.uri+"add?menu_id="+admin.get('menu_id')+"\">添加</a>",
+                      "tableconfig":"<a class=\"btn btn-primary btn-sm\" href=\""+admin.uri+"add?menu_id="+admin.get('menu_id')+"\" target=\"_blank\">表结构快速通道</a>",
+                      "custom":"<a class=\"btn btn-primary btn-sm\" href=\""+admin.uri+"index?menu_id="+admin.get('menu_id')+"&custom=on\">自定义显示</a>",
+                      "index":"<a class=\"btn btn-primary btn-sm\" href=\""+admin.uri+"index?menu_id="+admin.get('menu_id')+"\">完成自定义</a>"};
+        for(tool in toolList){
+            $('#tools').append(tools[toolList[tool]]+'<br/>');
+        }
     }
 
     //default显示
@@ -76,12 +174,8 @@
     admin.doEdit    =   function (obj,id){
         var val     =   $(obj).prev().val();
         var field   =   $(obj).parent().data('field');
-        if(!admin.editUrl){
-            alert('编辑失败联系管理员');
-            return false;
-        }
         $.ajax({
-            url:admin.editUrl,
+            url:admin.uri+'doEditColumn',
             data:"id="+id+"&"+field+"="+encodeURIComponent(val),
             type:'post',
             dataType:'text',
@@ -110,12 +204,8 @@
         var param   =   eval("("+$(obj).attr('param')+")");
         var val     =   $(obj).attr('val') == param.on ? param.off : param.on;
         var field   =   $(obj).attr('field');
-        if(!admin.editUrl){
-            alert('编辑失败联系管理员');
-            return false;
-        }
         $.ajax({
-            url:admin.editUrl,
+            url:admin.uri+'doEditColumn',
             data:"id="+id+"&"+field+"="+val,
             type:'post',
             dataType:'text',
@@ -138,7 +228,7 @@
         var column  =   $(t).attr('column');
         var val     =   $(t).attr('val') == 1 ? 0 : 1;
         $.ajax({
-            url:admin.columnSwitchUrl,
+            url:admin.uri+'columnSwitch',
             data:"column="+column+"&val="+val,
             type:'GET',
             success:function(res){
@@ -162,35 +252,7 @@
         });
         this.deleteItem(id);
     }
-    admin.listInit  =   function(){
-        $('.table').before('<div style="margin-top:5px;">\
-            <input type="checkbox" id="checkall">全选<input type="checkbox" id="checkreverse">反选  \
-            <a class="btn btn-primary btn-sm" onclick="javascript:void(0);" \
-                href="javascript:admin.delchecked();">删除</a></div>');
-        $('.table tr:eq(0)').prepend('<td></td>');
-        $('.table tr:gt(0)').each(function(index){
-            $(this).prepend('<td><input type="checkbox" name="id['+index+']" class="deleteCheckbox" value="'+$(this).attr('itemid')+'"></td>');                
-        });
-        $('#checkall').click(function(){
-            var parentChecked   =   $(this).prop("checked");
-            $('.deleteCheckbox').each(function(){
-                $(this).prop("checked",parentChecked);
-            });
-        })
-        $('#checkreverse').click(function(){
-            $('.deleteCheckbox').each(function(){
-                if($(this).prop("checked")){
-                    $(this).prop("checked",false);
-                }else {
-                    $(this).prop("checked",true);
-                }
-            });
-        })
-        $('select[name="page_num"]').change(function(){
-            $(".form-inline").submit();
-        });
-        $('select[name="fieldName[]"]').chosen();
-    }
+    
     //show
     admin.showText  =   function(t){
         var x_max = $(window).width();
@@ -576,7 +638,7 @@
                 }
             });
         }
-        admin.nestable  =   function(sortUrl){
+        admin.nestable  =   function(){
             if(!this.isPc()){
                 return;
             }
@@ -596,7 +658,7 @@
             $('.overflowx').on('change', function(e) {  
                 var sort    =   $('.overflowx').nestable('serialize');
                 $.ajax({
-                    url:sortUrl,
+                    url:admin.uri+'sort',
                     data:{'sort':sort},
                     dataType:'json',
                     type:'POST',
@@ -630,5 +692,70 @@
                 $(this).prop("checked",parentChecked);
             });
         };
+        admin.listColumn    =   function(listColumn){
+            if(admin.get('custom') != 'on'){
+                return ;
+            }
+            $(listColumn).each(function(){
+              var column  = $(this).data('column');
+              var val     = $(this).data('val');
+              var checked = val == 0 ? 'checked' : '';
+              var div     = '  <span onclick="admin.columnSwitch(this)" column="'+column+'" val="'+val+'}">\
+              <label>\
+                  <input type="checkbox" '+checked+' style="width:0px;" class="ace ace-switch ace-switch-6">\
+                  <span class="lbl"></span> \
+              </label>\
+              </span>';
+              $(this).append(div);
+            });
+        }
+        admin.listInit  =   function(){
+            $('.table').before('<div style="margin-top:5px;">\
+                <input type="checkbox" id="checkall">全选<input type="checkbox" id="checkreverse">反选  \
+                <a class="btn btn-primary btn-sm" onclick="javascript:void(0);" \
+                    href="javascript:admin.delchecked();">删除</a></div>');
+            $('.table tr:eq(0)').prepend('<td></td>');
+            $('.table tr:gt(0)').each(function(index){
+                $(this).children().each(function(index){
+                    var html    =   admin.list.td(this,index,);
+                    $(this).html(html);
+                })
+                $(this).prepend('<td><input type="checkbox" name="id['+index+']" class="deleteCheckbox" value="'+$(this).data('id')+'"></td>');
+            });
+            $('#checkall').click(function(){
+                var parentChecked   =   $(this).prop("checked");
+                $('.deleteCheckbox').each(function(){
+                    $(this).prop("checked",parentChecked);
+                });
+            })
+            $('#checkreverse').click(function(){
+                $('.deleteCheckbox').each(function(){
+                    if($(this).prop("checked")){
+                        $(this).prop("checked",false);
+                    }else {
+                        $(this).prop("checked",true);
+                    }
+                });
+            })
+            $('select[name="page_num"]').change(function(){
+                $(".form-inline").submit();
+            });
+            $('select[name="fieldName[]"]').chosen();
+        }
+        admin.list.td   =   function(t,index){
+            var val     =   $(t).html();
+            if(!!admin.listTdType[index]){
+                // switch(admin.listTdType[index]){
+                //     case 'id':
+                //         console.log('id');
+                //     break;
+                //     case 'defaultType': 
+                //         console.log('default');
+                //     break;
+                // }
+
+            }
+            return val;
+        }
 }(window));
 

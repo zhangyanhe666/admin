@@ -4,16 +4,12 @@ use Application\Model\SysModel;
 use Library\Application\Common;
 use Application\Tool\User;
 use Application\Tool\Authority;
-class ChildMenu extends SysModel
+class ChildMenu extends Model
 {
     public $childMenus  =   array();
     public $tableMap    =   array();
-    //表配置
-    public function init() {
-        $this->setAdapter('sys');
-        $this->setTable('sys_childmenu');
-        parent::init();
-    }
+    public $tableName   =   'sys.sys_childmenu';
+
     public function getItem($id){
         if(!isset($this->tableMap[$id])){
             $this->tableMap[$id]   =   parent::getItem($id);
@@ -22,13 +18,14 @@ class ChildMenu extends SysModel
     }
     //获取当前项目数据
     public function getMenu(){
-        return $this->getItem($this->getServer('router')->getMenuId());
+        $menu_id    =   $this->getService('router')->getMenuId();
+        return  $this->getTableGateway()->select(['id'=>$menu_id]);
     }
     //获取用户所有子菜单
     public function getChildMenus($id){
-        $gid    =   $this->getServer('Model\AdminUser')->getItem($id)->group_id;
+        $gid    =   $this->getService('Model\AdminUser')->getItem($id)->group_id;
         //判断超级管理员组
-        if($this->getServer('Model\AdminGroup')->isSuperAdmin($gid)){
+        if($this->getService('Model\AdminGroup')->isSuperAdmin($gid)){
             $cmenus =   $this->where(array('is_show'=>0))->order(array('sort','id'))->getAll()->toArray();
         }else{
             $cmenus =   $this->where(array('is_show'=>0,'b.gid'=>$gid))->join(array('b'=>'sys_group_map'),'sys_childmenu.id=b.menu_id',array())->order(array('sys_childmenu.sort','sys_childmenu.id'))->getAll()->toArray();
@@ -48,7 +45,7 @@ class ChildMenu extends SysModel
     }
     public function getMenuList($pid=0){
         $data   =   array();
-        $menuList   =   $this->getServer('Model\Menu')->menuList($pid);
+        $menuList   =   $this->getService('Model\Menu')->menuList($pid);
         if(!empty($menuList)){
             foreach ($menuList as $v){
                 $data[$v['name']]   = Common::merge($this->getMenuList($v['id']), $this->childMenu($v['id']));
@@ -96,7 +93,7 @@ class ChildMenu extends SysModel
             return '';
         }
         list($db,$table)    =   explode('.',$v);
-        !isset($dblist[$db])  &&  $dblist[$db]    =   array_column($this->getServer('Model\InformationSchema')->config($db)->getAllTables(),'TABLE_COMMENT','TABLE_NAME');
+        !isset($dblist[$db])  &&  $dblist[$db]    =   array_column($this->getService('Model\InformationSchema')->config($db)->getAllTables(),'TABLE_COMMENT','TABLE_NAME');
         $comment    =   isset($dblist[$db][$table]) && !empty($dblist[$db][$table]) ? $dblist[$db][$table] : $table;
         return $comment;
     }

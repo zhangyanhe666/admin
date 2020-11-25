@@ -9,17 +9,12 @@ namespace Library\ServiceManager\Factory;
 use Library\ServiceManager\Factory\FactoryInterface;
 class ControllerFactory implements FactoryInterface{
     public function createService($serviceManager) {
-        $routerControl  =   $serviceManager->get('router')->getControl();
-        $controlName    =   $serviceManager->get('config')->classPath($routerControl,'Controller');
-        if(!$controlName){
-            $error      =   $serviceManager->get('config')->error;
-            $controlName=   $serviceManager->get('config')->classPath($error->control,'Controller');
-            if(!$controlName){
-                $serviceManager->get('router')->error('页面不存在');
-            }
+        $controlName        =   $serviceManager->get('router')->getControl();
+        $controlClassName   =   $serviceManager->get('module')->getController($controlName);
+        if(!class_exists($controlClassName)){
+            throw new \Exception("control ".$controlClassName." not found", 1);
         }
-        $control        =   new $controlName();
-        $control->setServerManager($serviceManager);
+        $control        =   new $controlClassName($serviceManager);
         return $control;
     }
 }

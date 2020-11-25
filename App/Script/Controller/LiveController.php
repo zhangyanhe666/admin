@@ -11,7 +11,7 @@ namespace Script\Controller;
 class LiveController extends BaseController{
     
     public function indexAction() {
-        $data   =   file_get_contents($this->getServer('config')->filePath('Cache/Tmp/itv_json_v6.php'));
+        $data   =   file_get_contents($this->getService('config')->filePath('Cache/Tmp/itv_json_v6.php'));
         $data   =   json_decode($data,TRUE);
         $ids    =   array_column($data['live'],'id');
         $name    =   array_map(function($v){
@@ -19,12 +19,12 @@ class LiveController extends BaseController{
         },array_column($data['live'],'name'));
         $quality    =   array_column($data['live'],'quality');
         
-        $this->getServer('wukong.zhibo_hdp')->batchInsert1(array('id','name','quality'),$ids,$name,$quality);
+        $this->getService('wukong.zhibo_hdp')->batchInsert1(array('id','name','quality'),$ids,$name,$quality);
         
     }
     
     public function channelAction(){
-        $data   =   $this->getServer('Model\LiveHttp')->dsj();
+        $data   =   $this->getService('Model\LiveHttp')->dsj();
         print_r($data);exit;
     }
 }

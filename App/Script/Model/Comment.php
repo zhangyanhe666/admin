@@ -45,10 +45,10 @@ class Comment extends SysModel{
         return $data;
     }
     public function subcribe(){
-        $data   =   $this->getServer('wukong.push_comment')->join(array('c'=>'wk_user'), 'push_comment.touser_id=c.id', array('realId','dev'))->where(array('is_push'=>0,'wkid is null','(c.ver>=300 or c.ver=0)'))->getAll()->toArray();
+        $data   =   $this->getService('wukong.push_comment')->join(array('c'=>'wk_user'), 'push_comment.touser_id=c.id', array('realId','dev'))->where(array('is_push'=>0,'wkid is null','(c.ver>=300 or c.ver=0)'))->getAll()->toArray();
         if(!empty($data)){
             $ids    =   array_column($data,'id');
-            $this->getServer('wukong.push_comment')->update(array('is_push'=>1),array('id'=>$ids));
+            $this->getService('wukong.push_comment')->update(array('is_push'=>1),array('id'=>$ids));
         }
         return $data;
     }

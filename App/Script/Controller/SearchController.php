@@ -26,14 +26,14 @@ class SearchController extends Controller{
     public function updateSearchWordAction(){
         set_time_limit(0);
         $id     =   0;
-        $data   =   $this->getServer('wukong.v_all')->columns(array('id','name'))
+        $data   =   $this->getService('wukong.v_all')->columns(array('id','name'))
                     ->where(array("search_word = '' and name !=''"))->order('id')->limit(5000)->getAll();
         $count  =   $data->count();
         if($count>0){
             foreach ($data as $v){
-                $search_wordarr =   $this->getServer('pinyin')->strToPy($v->name); 
+                $search_wordarr =   $this->getService('pinyin')->strToPy($v->name); 
                 $search_word    =   implode('', array_column($search_wordarr,'zi'));
-                $this->getServer('wukong.v_all')->update(array('search_word'=>$search_word),array('id'=>$v->id));
+                $this->getService('wukong.v_all')->update(array('search_word'=>$search_word),array('id'=>$v->id));
             }
         }
         echo "数据总更新条数{$count}\n";
@@ -41,14 +41,14 @@ class SearchController extends Controller{
     public function updateLiveSearchWordAction(){
         set_time_limit(0);
         $id     =   0;
-        $data   =   $this->getServer('wukong.zhibo_m2')->columns(array('id','name'))
+        $data   =   $this->getService('wukong.zhibo_m2')->columns(array('id','name'))
                     ->where(array("search_word = '' and name !=''"))->order('id')->limit(3000)->getAll();
         $count  =   $data->count();
         if($count>0){
             foreach ($data as $v){
-                $search_wordarr =   $this->getServer('pinyin')->strToPy($v->name); 
+                $search_wordarr =   $this->getService('pinyin')->strToPy($v->name); 
                 $search_word    =   implode('', array_column($search_wordarr,'zi'));
-                $this->getServer('wukong.zhibo_m2')->update(array('search_word'=>$search_word),array('id'=>$v->id));
+                $this->getService('wukong.zhibo_m2')->update(array('search_word'=>$search_word),array('id'=>$v->id));
             }
         }
         echo "数据总更新条数{$count}\n";
@@ -57,11 +57,11 @@ class SearchController extends Controller{
     const METCH_DEGREE  =   0.5;
     public function testAction(){
         echo intval(14155053954/1024/1024);exit;
-        $data   =   $this->getServer('search.search_all')->where(array('id'=>array('44184','92199')))->getAll()->toArray();
+        $data   =   $this->getService('search.search_all')->where(array('id'=>array('44184','92199')))->getAll()->toArray();
         var_dump($data);exit;
         $a  =   12345678900001111;
         echo $a;exit;
-            $pyarr  =   $this->getServer('pinyin')->strToPy('山东卫视“重阳·九重礼”晚会'); 
+            $pyarr  =   $this->getService('pinyin')->strToPy('山东卫视“重阳·九重礼”晚会'); 
             $gwords     =   $this->groupWords($pyarr);
             var_dump($gwords);exit;
             var_dump(count($gwords));exit;
@@ -86,7 +86,7 @@ class SearchController extends Controller{
             $searchData         =   array();
             $searchFirstData    =   array();
             foreach ($data as $v){
-                $pyarr  =   $this->getServer('pinyin')->strToPy($v['name']);
+                $pyarr  =   $this->getService('pinyin')->strToPy($v['name']);
                 if(!empty($pyarr)){
                     
                     $gwords     =   $this->groupWords($pyarr);
@@ -120,12 +120,12 @@ class SearchController extends Controller{
                 $columns    =   array_keys(current(current($searchData)));
                 foreach ($searchData as $k=>$sv){
                     $kk     =   is_numeric($k) ? 0 : strtolower($k);
-                    $this->getServer('search.search_'.$kk)->batchInsert($columns,$sv);
+                    $this->getService('search.search_'.$kk)->batchInsert($columns,$sv);
                 }
             }
             if(!empty($searchFirstData)){       
                 $columns    =   array_keys(current($searchFirstData));
-                $this->getServer('search.search_first')->batchInsert($columns,$searchFirstData);                
+                $this->getService('search.search_first')->batchInsert($columns,$searchFirstData);                
             }
             //设置要更新的数据完成更新
             $this->setUpdate(-1, $sign, $limit);
@@ -155,11 +155,11 @@ class SearchController extends Controller{
             $where[]=   "{$name} !='' and {$name} is not null";
             $columns=   array('id',$wkid,$name);
             $where[]    =   "{$wkid} !='' and {$wkid} is not null and {$wkid} !=0";
-            $data   =   $this->getServer('wukong214.'.$table)->columns($columns)->where($where)->limit(500)->getAll()->toArray();
+            $data   =   $this->getService('wukong214.'.$table)->columns($columns)->where($where)->limit(500)->getAll()->toArray();
             if(!empty($data)){
                 $wkidarr    =   array_column($data,$wkid);
                 $namearr    =   array_column($data,$name);
-                $this->getServer('search.search_all')->batchInsert1(array('wkid','source','name'),$wkidarr,$table,$namearr);
+                $this->getService('search.search_all')->batchInsert1(array('wkid','source','name'),$wkidarr,$table,$namearr);
                 $end    =   end($data);
                 $startId=   $end['id'];
             }
@@ -186,19 +186,19 @@ class SearchController extends Controller{
         $degree =   $this->getRequest()->getQuery('degree',  self::METCH_DEGREE);
         $degree =   $degree > 0 && $degree < 1 ? $degree : self::METCH_DEGREE;
         //翻译
-        $pyarr  =   $this->getServer('pinyin')->strToPy($w);
+        $pyarr  =   $this->getService('pinyin')->strToPy($w);
         if(!empty($pyarr)){
             if(count($pyarr) == 1){
-                $data     =    $this->getServer('search.search_first')
+                $data     =    $this->getService('search.search_first')
                         ->where(['searchzi'=>$pyarr[0]['zi']])->order('wordCount')->limit(50)->getAll()->toArray();
             }else{                
                 $res      =   $this->searchData($pyarr);
-//                    $translation=   $this->getServer('search.search_translation')->order('strlen')->getAll()->toArray();
+//                    $translation=   $this->getService('search.search_translation')->order('strlen')->getAll()->toArray();
 //                    if(!empty($translation)){
 //                        foreach ($translation as $v){
 //                            $w  = str_replace($v['from_name'], $v['to_name'], $w);
 //                        }
-//                        $pyarr1         =   $this->getServer('pinyin')->strToPy($w);
+//                        $pyarr1         =   $this->getService('pinyin')->strToPy($w);
 //                        $gwords1        =   array_column($this->groupWords($pyarr1),'py');
 //                        $searchMetch1   =   $this->searchMetch(count($gwords1), $degree);
 //                        $data2          =   $this->searchData(array_diff($gwords1,$gwords),$searchMetch1);
@@ -251,7 +251,7 @@ class SearchController extends Controller{
             var_dump($v);exit;
             $kk     =   is_numeric($v{0}) ? 0 : strtolower($v{0});
             $where['searchpy']  =   $v;
-            $data1  =   $this->getServer('search.search_'.$kk)->where($where)->getAll()->toArray();
+            $data1  =   $this->getService('search.search_'.$kk)->where($where)->getAll()->toArray();
             $data   =   Common::merge($data, $data1);
 //            foreach ($data1 as $dv){
 //                $dkeys      =   $dv['source'].$dv['wkid'];
@@ -315,13 +315,13 @@ class SearchController extends Controller{
         if($sign == $oldsign){
            echo '标记不能相同'; exit;
         }        
-        if($sign   ==   -1 || $this->getServer('search.search_all')->where(array('status'=>$sign))->count() == 0){
-            $this->getServer('search.search_all')->update(array('status'=>$sign),array('status'=>$oldsign),$limit);
+        if($sign   ==   -1 || $this->getService('search.search_all')->where(array('status'=>$sign))->count() == 0){
+            $this->getService('search.search_all')->update(array('status'=>$sign),array('status'=>$oldsign),$limit);
         }
     }
     
     public function getDate($sign,$limit){
-        $data   =   $this->getServer('search.search_all')->where(array('status'=>$sign))->limit($limit)->getAll()->toArray();
+        $data   =   $this->getService('search.search_all')->where(array('status'=>$sign))->limit($limit)->getAll()->toArray();
         return $data;
     }
     public function groupWords($words){

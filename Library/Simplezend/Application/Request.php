@@ -72,14 +72,10 @@ class Request{
     }
     public function setArgv(){
         $queryStr =   '';
-        if(($u  =   getopt('u:')) != false){
-                $uu =   $u['u'];
-                if (($pos   =   strpos($uu, '?')) !== false) {
-                    $queryStr    =   substr($uu,$pos+1);
-                }
+        if(PHP_SAPI=='cli' && isset($_SERVER['argv'][2])){
+            $get    =   str_replace(':', '&', $_SERVER['argv'][2]);
+            parse_str($get,$_GET);
         }
-        $get    =   \Library\Application\Common::strToArr($queryStr, ':', '=');
-        $this->setQuery(new Parameters($get));
     }
     public function setServer($server){
         $this->serverParams =   $server;
@@ -95,11 +91,11 @@ class Request{
     public function getUri(){
         if(empty($this->uri)){
             //使用脚本路由
-            if(($u  =   getopt('u:')) != false){
-                $uri    =   $u['u'];
+            if(PHP_SAPI=='cli'){
+                $uri    =   isset($_SERVER['argv'][1]) ? $_SERVER['argv'][1] : '';
                 $this->isScript =   TRUE;
             }else{
-                $uri    =   $this->getServer('REQUEST_URI');
+                $uri    =   $this->getService('REQUEST_URI');
             }
             if (($pos   =   strpos($uri, '?')) !== false) {
                 $uri    =   substr($uri, 0, $pos);
@@ -150,7 +146,7 @@ class Request{
 
         return $this->fileParams->get($name, $default);
     }
-    public function getServer($name = null, $default = null)
+    public function getService($name = null, $default = null)
     {
         if ($this->serverParams === null) {
             $this->serverParams = new Parameters();
@@ -162,11 +158,7 @@ class Request{
 
         return $this->serverParams->get($name, $default);
     }
-    public function queryString($param=array()){
-        $query  =   $this->getQuery();
-        !empty($param)   && ($query = count($query->toArray())>0 ? array_merge($query->toArray(),$param) : $param);
-        return http_build_query($query);
-    }
+
     /**
      * Convert PHP superglobal $_FILES into more sane parameter=value structure
      * This handles form file input with brackets (name=files[])

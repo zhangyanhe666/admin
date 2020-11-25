@@ -70,4 +70,9 @@ class TableGateway extends AbstractTableGateway
 
         $this->initialize();
     }
+
+    public function columns($columns){
+        $this->colums   =   $columns;
+        return $this;
+    }
 }

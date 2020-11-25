@@ -1,0 +1,12 @@
+<?php if(empty($this->menuList)){
+	return '';
+}?>
+ <?php foreach($this->menuList as $v):?>
+ <li>
+<a href="/<?=$v['action'].'_'.$v['id']?>/index">
+ <i class="icon-double-angle-right"></i>
+<?=$v['name']?>
+<br><span style="color:red"><?=$v['person_in_charge']?></span>
+</a>
+</li> 
+<?php endforeach;?>

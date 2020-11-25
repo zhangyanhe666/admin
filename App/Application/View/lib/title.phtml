@@ -1,17 +1,17 @@
 <link rel="stylesheet" href="/assets/css/chosen.css">
 <script src="/assets/js/chosen.jquery.js"></script>
-<?php if($this->getServer('Model\ChildMenu')->getMenu()->count()>0):?>
+<?php if($this->getService('Model\ChildMenu')->getMenu()->count()>0):?>
 <div class="page-header">
         <h1 id='menu-title'>
-            <a href="<?=$this->router()->url(array('action'=>'index'));?>"><?=$this->getServer('Model\ChildMenu')->getMenu()->name?></a>
+            <a href="<?=$this->router()->url(array('action'=>'index'));?>"><?=$this->getService('Model\ChildMenu')->getMenu()->name?></a>
                 <small>
                         <?=\Library\Application\Common::subTitle($this->router()->getAction());?>
                     <?php if(Application\Tool\User::$isSuperAdmin):?>
             <a target="_blank" href="<?=$this->router()->url(array('control'=>'dispatch_567'),array('fieldName[]'=>'id','fieldVal[]'=>$this->router()->getMenuId()))?>">超链到菜单</a>
             <?php endif;?>
-            <?=!empty($this->getServer('Model\ChildMenu')->getMenu()->person_in_charge) ? '<span style="color:red">(负责人：'.$this->getServer('Model\ChildMenu')->getMenu()->person_in_charge.')</span>' : ''?>
+            <?=!empty($this->getService('Model\ChildMenu')->getMenu()->person_in_charge) ? '<span style="color:red">(负责人：'.$this->getService('Model\ChildMenu')->getMenu()->person_in_charge.')</span>' : ''?>
                 </small>            
         </h1>
-    <div style="margin-left: 30px;margin-top:5px;"><?=$this->getServer('Model\ChildMenu')->getMenu()->describe?></div>
+    <div style="margin-left: 30px;margin-top:5px;"><?=$this->getService('Model\ChildMenu')->getMenu()->describe?></div>
 </div>
 <?php endif;?>

@@ -5,7 +5,7 @@
 <!-- index page link -->
 <?php if ($items->page->current != 1): ?>
  <li>
-     <a href="<?=$this->router()->url(array(),array('page'=>1),true)?>">
+     <a href="<?=$this->getService('router')->url(array(),array('page'=>1),true)?>">
 首页
  </a>
 </li>
@@ -20,7 +20,7 @@
 <!-- Previous page link -->
 <?php if (!empty($items->page->prev)): ?>
  <li>
-<a href="<?=$this->router()->url(array(),array('page'=>$items->page->prev),true)?>">
+<a href="<?=$this->getService('router')->url(array(),array('page'=>$items->page->prev),true)?>">
 &laquo;
  </a>
 </li>
@@ -40,7 +40,7 @@
 
 if ($page != $items->page->current): ?>
 	<li>
-<a href="<?=$this->router()->url(array(),array('page'=>$page),true)?>">
+<a href="<?=$this->getService('router')->url(array(),array('page'=>$page),true)?>">
 <?php echo $page; ?>
 </a>
 </li>
@@ -57,7 +57,7 @@ if ($page != $items->page->current): ?>
 <!-- Next page link -->
 <?php if (isset($items->page->next)): ?>
 <li>
-<a href="<?=$this->router()->url(array(),array('page'=>$items->page->next),true)?>">
+<a href="<?=$this->getService('router')->url(array(),array('page'=>$items->page->next),true)?>">
 &raquo;
 </a>
 </li>
@@ -73,7 +73,7 @@ if ($page != $items->page->current): ?>
 <!-- end page link -->
 <?php if ($items->page->totalPage != $items->page->current): ?>
  <li>
-<a href="<?=$this->router()->url(array(),array('page'=>$items->page->totalPage),true)?>">
+<a href="<?=$this->getService('router')->url(array(),array('page'=>$items->page->totalPage),true)?>">
 尾页
  </a>
 </li>
@@ -99,7 +99,9 @@ if ($page != $items->page->current): ?>
 
  <div style="margin-top:-20px;" class="alert" >
     <strong>运行时间：</strong>    <br/>
-    <?php foreach (Library\Application\Common::getTimeAnchor() as $k=>$v):?>
+    <?php 
+        Library\Application\Timer::setTimeAnchor('end');
+        foreach (Library\Application\Timer::getTimeAnchor() as $k=>$v):?>
     <?=$k?>:(
     <?php foreach ($v as $vk=>$vv):?>
     <?=$vk?>:<?=$vv?>

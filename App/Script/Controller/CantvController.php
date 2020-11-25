@@ -12,21 +12,21 @@ class CantvController extends BaseController{
     
 
     public function indexAction() {
-        $model  = $this->getServer('Model\Cantv');
+        $model  = $this->getService('Model\Cantv');
         print_r($this->execScript(array($model,'importVideoCategory')));exit;
     }
     
 
     public function videoAction() {
-        $model  = $this->getServer('Model\Cantv');
+        $model  = $this->getService('Model\Cantv');
         print_r($this->execScript(array($model,'importVideo')));exit;
     }
     public function videoInfoAction() {
-        $model  = $this->getServer('Model\Cantv');
+        $model  = $this->getService('Model\Cantv');
         print_r($this->execScript(array($model,'importVideoInfo')));exit;
     }
     public function liveAction() {
-        $model  = $this->getServer('Model\Cantv');
+        $model  = $this->getService('Model\Cantv');
         print_r($this->execScript(array($model,'importLive')));exit;
     }
     

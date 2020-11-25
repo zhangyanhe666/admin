@@ -74,7 +74,7 @@ class ExceptionHandle{
     public function __construct($service){
         $this->service  =   $service;
     }
-    public function getServer($server){
+    public function getService($server){
         return $this->service->get($server);
     }
     //打印错误信息

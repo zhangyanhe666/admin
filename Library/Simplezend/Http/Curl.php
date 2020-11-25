@@ -6,7 +6,6 @@
  * and open the template in the editor.
  */
 namespace Library\Http;
-use Library\Dom\Query;
 class Curl{
     public $ch;
     public $result;
@@ -20,9 +19,7 @@ class Curl{
         }
         return $res;
     }
-    public function xml($encoding=null){
-        return new Query($this->result,$encoding);
-    }
+
     public function error(){
         return curl_error($this->ch);
     }

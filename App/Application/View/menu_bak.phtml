@@ -1,0 +1,17 @@
+<?php if(empty($this->menuList)){
+	return '';
+}?>
+<?php foreach($this->menuList as $menu):?>
+<li class="hsub"  id="menu-<?=$menu->id?>">
+    <a  href="javascript:void(0);" class="dropdown-toggle">
+        <i class="menu-icon fa fa-pencil-square-o"></i>
+        <span class="menu-text"><?=$menu->name?></span>
+        <b class="arrow icon-angle-down"></b>
+    </a>
+    <b class="arrow"></b>
+    <ul class="submenu">
+    	<?=$this->childMenu[$menu->id]['menu']?>
+    	<?=$this->childMenu[$menu->id]['ChildMenu']->result()?>
+    </ul>
+</li>
+<?php endforeach;?>

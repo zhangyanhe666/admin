@@ -32,17 +32,34 @@ class ServiceManager{
         if($instance == null && isset($this->instanceService[$name])){
             $instance   =   $this->createFromInstanceService($name);
         }
-        if($instance == null && is_callable($this->customService)){
-             $instance  =   call_user_func($this->customService,$name);
+        if($instance == null){
+            $instance   =   $this->customService($name);
         }
+        // if($instance == null && is_callable($this->customService)){
+        //      $instance  =   call_user_func($this->customService,$name);
+        // }
+
         if($instance == null){
             throw new \Exception($name.' not find');
         }
         $this->instances[$name] =   $instance;
         return $instance;
     }
+
+    public function customService($name){
+        if(empty($this->customService)){
+            return null;
+        }
+        foreach ($this->customService as $value) {
+            $instance  =   call_user_func($value,$name);
+            if(!empty($instance)){
+                return $instance;
+            }
+        }
+        return null;
+    }
     public function setCustomService($serviceCallable){
-        $this->customService    =   $serviceCallable;
+        $this->customService[]    =   $serviceCallable;
     }
     public function setServer($name,$server){
         $this->instances[$name] =   $server;
@@ -77,31 +94,13 @@ class ServiceManager{
         }
         return new $instance($this);
     }
-    public function setFactories($name,$factory=''){
-        if(is_array($name)){
-            foreach($name as $k=>$v){
-                $this->factorices[$k]   =   $v;
-            }
-        }elseif($factory != ''){
+    public function setFactorie($name,$factory){
             $this->factorices[$name]   =   $factory;
-        }
     }
-    public function setInstanceClasses($name,$instance=''){
-        if(is_array($name)){
-            foreach($name as $k=>$v){
-                $this->instanceClasses[$k]   =   $v;
-            }
-        }elseif($instance != ''){
+    public function setInstanceClass($name,$instance){
             $this->instanceClasses[$name]   =   $instance;
-        }
     }
-    public function setInstanceService($name,$instance=''){
-        if(is_array($name)){
-            foreach($name as $k=>$v){
-                $this->instanceService[$k]   =   $v;
-            }
-        }elseif($instance != ''){
+    public function setInstanceService($name,$instance){
             $this->instanceService[$name]   =   $instance;
-        }
     }
 }

@@ -8,75 +8,86 @@
 namespace Library\Application;
 class Controller{
     
-    private $serverManager;
-    //通过配置文件传入需要的信息
-    public function init(){}
+    /**
+     * [$serviceManager 服务管理器]
+     * @var [type]
+     */
+    private $serviceManager;
+
+    /**
+     * 初始化控制器
+     * @Author   zhangyanhe
+     * @DateTime 2020-10-14
+     * @param    [type]     $serviceManager [description]
+     */
+    public function __construct($serviceManager){
+        $this->serviceManager    =   $serviceManager;
+    }
     //找不到页面处理
     protected function notFound(){
         $this->router()->error('请求不存在');
     }
-    //index默认使用方法
-    public function indexAction(){
-        return $this->defaultResponse();
-    }
+
+    /**
+     * 控制器调度
+     * @Author   zhangyanhe
+     * @DateTime 2020-10-14
+     * @return   [type]     [description]
+     */
     public function onDispatch(){
         $method    =   $this->router()->getAction().'Action';
         if (!method_exists($this, $method)) {
             $method = 'notFound';
         }
         $response    = call_user_func(array($this,$method));
-        Common::setTimeAnchor('end');
-        return is_object($response) ? $response : $this->defaultResponse();
-    }
-    public function setServerManager($serverManager){
-        $this->serverManager    =   $serverManager;
-        return $this;
+        return $response;
     }
     //获取request对象
     protected function getRequest(){
-        return $this->getServer('request');
-    }
-    protected function config(){
-        return $this->getServer('config');
-    }
-    protected function json(){
-        return $this->getServer('jsonresponse');
-    }
-    //路由
-    protected function router(){
-        return $this->getServer('router');
-    }
-    //获取server
-    protected function getServerManager(){
-        return $this->serverManager;
-    }
-    protected function viewData(){
-        return $this->getServer('responseData');
-    }
-    protected function defaultResponse(){
-        return $this->json();
-    }
-    //检测请求类别
-    protected function isAjax(){
-        return $this->getRequest()->isAjax();
+        return $this->getService('request');
     }
 
-    protected function getServer($server,$useAlreadyExists=true){
-        return $this->getServerManager()->get($server,$useAlreadyExists);
-    }
     /**
-     * tmp处理
-     * @param string $tpl
-     * @return template;
+     * 读取配置信息
+     * @Author   zhangyanhe
+     * @DateTime 2020-10-14
+     * @return   [type]     [description]
      */
-    protected function template($tpl=''){
-        //设置默认模板
-        if(empty($tpl)){
-            $control    =   strtolower($this->router()->getControl());
-            $tpl        =   "{$control}/{$this->router()->getAction()}";
-        }
-        $this->viewData()->setTpl($tpl);
-        return $this->getServer('template');
+    protected function config(){
+        return $this->getService('config');
     }
+
+    /**
+     * 路由对象
+     * @Author   zhangyanhe
+     * @DateTime 2020-10-14
+     * @return   [type]     [description]
+     */
+    protected function router(){
+        return $this->getService('router');
+    }
+    
+    /**
+     *获取server
+     * @Author   zhangyanhe
+     * @DateTime 2020-10-14
+     * @return   [type]     [description]
+     */
+    protected function getserviceManager(){
+        return $this->serviceManager;
+    }
+
+    /**
+     * 获取服务类
+     * @Author   zhangyanhe
+     * @DateTime 2020-10-14
+     * @param    [type]     $server           [description]
+     * @param    boolean    $useAlreadyExists [description]
+     * @return   [type]                       [description]
+     */
+    protected function getService($server,$useAlreadyExists=true){
+        return $this->getserviceManager()->get($server,$useAlreadyExists);
+    }
+
 
 }

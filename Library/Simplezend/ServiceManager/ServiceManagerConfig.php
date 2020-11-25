@@ -6,7 +6,7 @@
  * and open the template in the editor.
  */
 namespace Library\ServiceManager;
-
+use Library\Tool\ToolArray;
 class ServiceManagerConfig{
     //使用工厂实例对象
     protected $factories = array(
@@ -19,7 +19,6 @@ class ServiceManagerConfig{
     //直接实例对象
     protected $instances = array(
                  'request'=>'\Library\Application\Request',
-                 'response'=>'\Library\Response\Response',
                  'autoload'=>'\Library\Loder\Autoload',
                  'curl'=>'\Library\Http\Curl',
                  'cookies'=>'\Library\Application\Cookies',
@@ -39,17 +38,29 @@ class ServiceManagerConfig{
                     'jsonresponse'=>'\Library\Response\Resolve\JsonResponse',
                     'Application'=>'\Library\Application\Application',
                 );
+    protected $customService    =   [];
     protected $config;
     public function __construct(array $config = array())
     {
-        $this->config   =   $config;
+        $this->config   =   ToolArray::merge([
+            'factories'=>$this->factories,
+            'instances'=>$this->instances,
+            'instancesService'=>$this->instancesService,
+            'customService'=>$this->customService,
+        ],$config);
     }
     public function configureServiceManager(ServiceManager $serviceManager){
-        $serviceManager->setServer('systemConfig', $this->config);
-        $serviceManager->setFactories($this->factories);
-        $serviceManager->setInstanceClasses($this->instances);
-        $serviceManager->setInstanceService($this->instancesService); 
-        method_exists($serviceManager->get('module'),'init') && $serviceManager->get('module')->init();//可以使用监听模式完成该操作
-        method_exists($serviceManager->get('module'),'getCustomService') && $serviceManager->setCustomService($serviceManager->get('module')->getCustomService());
+        foreach($this->config['factories'] as $k=>$v){
+            $serviceManager->setFactorie($k,$v);
+        }
+        foreach($this->config['instances'] as $k=>$v){
+            $serviceManager->setInstanceClass($k,$v);
+        }
+        foreach($this->config['instancesService'] as $k=>$v){
+            $serviceManager->setInstanceService($k,$v);
+        }
+        foreach($this->config['customService'] as $v){
+            $serviceManager->setCustomService($v);
+        }
     }
 }

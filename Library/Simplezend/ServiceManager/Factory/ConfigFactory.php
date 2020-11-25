@@ -10,9 +10,8 @@ use Library\ServiceManager\Factory\FactoryInterface;
 use Library\Application\Config;
 class ConfigFactory implements FactoryInterface{
     public function createService($serviceManager) {
-        $sysConfig          =   $serviceManager->get('systemConfig');
-        $sysConfig['uri']   =   $serviceManager->get('request')->getUri();
-        $config             =   new Config($sysConfig);
+        $appConfig   	=   $serviceManager->get('module')->getConfig();
+        $config     	=   new Config($appConfig);
         return $config;
     }
 }

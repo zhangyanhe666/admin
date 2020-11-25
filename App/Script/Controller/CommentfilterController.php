@@ -13,13 +13,13 @@ class CommentfilterController extends Controller
     
     public function indexAction() {
         set_time_limit(0);
-        $review     =   $this->getServer('config')->filePath('Cache/review.txt');
-        $pass       =   $this->getServer('config')->filePath('Cache/pass.txt');
-        $reject     =   $this->getServer('config')->filePath('Cache/reject.txt');
+        $review     =   $this->getService('config')->filePath('Cache/review.txt');
+        $pass       =   $this->getService('config')->filePath('Cache/pass.txt');
+        $reject     =   $this->getService('config')->filePath('Cache/reject.txt');
 
-        while($data       =   $this->getServer('Model\Shumei')->getComment()){
+        while($data       =   $this->getService('Model\Shumei')->getComment()){
             foreach ($data as $v){
-                $resJson    =   $this->getServer('Model\Shumei')->text($v['user_id'],$v['username'],$v['content']);
+                $resJson    =   $this->getService('Model\Shumei')->text($v['user_id'],$v['username'],$v['content']);
                 if ($resJson["code"] == 1100) {
                     if ($resJson["riskLevel"] == "PASS") {
                         $filename   =   $pass;

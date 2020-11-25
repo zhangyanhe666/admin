@@ -24,7 +24,7 @@ class Module{
         );
     }
     //获取指定service
-    public function getServer($server,$useAlreadyExists=true){
+    public function getService($server,$useAlreadyExists=true){
         return $this->service->get($server,$useAlreadyExists);
     }
     public function init(){

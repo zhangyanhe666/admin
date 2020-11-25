@@ -11,7 +11,7 @@ use Library\Db\Adapter\Adapter;
 use Library\Db\Sql\Predicate\Expression;
 class Model extends TableGateway\MyAbstractTableGateway{
     public  $exec    =   false;
-    private $server;
+    // private $server;
     private $dbKey;
     private $sqlSelect;
     private $batchUpdate    =   '';
@@ -75,13 +75,13 @@ class Model extends TableGateway\MyAbstractTableGateway{
         return $this->columns(array('column'=>new Expression($column)))->getRow()->column;
     }
     //设置Service
-    public function setServiceManager($server){
-        $this->server  =   $server;
-        return $this;
-    }
-    public function getServer($service,$useAlreadyExists=true){
-        return $this->server->get($service,$useAlreadyExists);
-    }
+    // public function setServiceManager($server){
+    //     $this->server  =   $server;
+    //     return $this;
+    // }
+    // public function getService($service,$useAlreadyExists=true){
+    //     return $this->server->get($service,$useAlreadyExists);
+    // }
     public function batchInsert($columns,$info,$fun=''){
         $values =   array_reduce($info, function($a1,$a2) use($fun){
             $a2     =   is_callable($fun) ? $fun($a2) : array_map(function($vv){

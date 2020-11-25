@@ -8,8 +8,7 @@
 return array(
     'dbConfig'=>__DIR__.'/local.php',
     'error'=>[
-        'control'=>'error',
-        'action'=>'index'
+        'error','index'
     ],
     'memcache'=>array(
         'cached'=>FALSE,
@@ -17,10 +16,7 @@ return array(
             'default'=>array('host'=>'localhost','port'=>'11211'),
         ),
     ),
-    'router'=>array(
-            'control'=>'index',
-            'action'=>'index'
-    ),
+    'router'=>array('index','index'),
     'view'=>array(
         'viewPath'=>dirname(__DIR__).'/View/',
         'suffix'=>'.phtml',

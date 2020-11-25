@@ -34,7 +34,7 @@ class CantvHttp extends SysModel{
     public function apiUrl($uri,$param=array()){
         $url    =   self::HOST.Common::replace_tag($uri, $param,'@');
         $this->msg[]    =   $url;
-        $data   =   $this->getServer('curl')->exec($url)->json(TRUE);
+        $data   =   $this->getService('curl')->exec($url)->json(TRUE);
         return $data;
     }
     
