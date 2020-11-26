@@ -7,7 +7,7 @@
                 <small>
                         <?=\Library\Application\Common::subTitle($this->router()->getAction());?>
                     <?php if(Application\Tool\User::$isSuperAdmin):?>
-            <a target="_blank" href="<?=$this->router()->url(array('control'=>'dispatch_567'),array('fieldName[]'=>'id','fieldVal[]'=>$this->router()->getMenuId()))?>">超链到菜单</a>
+            <a target="_blank" href="<?=$this->router()->url(array('control'=>'dispatch_3'),array('fieldName[]'=>'id','fieldVal[]'=>$this->router()->getMenuId()))?>">超链到菜单</a>
             <?php endif;?>
             <?=!empty($this->getServer('Model\ChildMenu')->getMenu()->person_in_charge) ? '<span style="color:red">(负责人：'.$this->getServer('Model\ChildMenu')->getMenu()->person_in_charge.')</span>' : ''?>
                 </small>            
