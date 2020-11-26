@@ -35,7 +35,9 @@ class Ftp{
         return ftp_login($this->conn(), $username, $password);
     }
     public function close(){
-        return ftp_close($this->conn());
+        if(!empty($this->ftpconn)){
+            return ftp_close($this->ftpconn);
+        }
     }
     public function __destruct() {
         $this->close();
