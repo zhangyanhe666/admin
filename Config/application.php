@@ -12,8 +12,7 @@ return array(
     ),
     //项目地址配置
     'systemRoot'=>'App',
-    //当前环境，false（开发环境），true（生产环境）
-    'production'=>false,
+    
     'config'=>'Config/application.php'
     /*
     //数据库配置
