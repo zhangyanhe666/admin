@@ -27,11 +27,14 @@ class FtpController extends Controller
         //检测权限
         $this->checkAuth();
         $server     =   $this->getServer('sys.sys_ftp_config')->getItem($this->getRequest()->getQuery('server',1));
-        $this->getServer('ftp')->connect($server)->chdir($server->path);
+        if($server->count() > 0){
+            $this->getServer('ftp')->connect($server)->chdir($server->path);
+        }
     }
     //ftp首页
     public function indexAction() {
-        $this->viewData()->setVariable('servers',array_column($this->getServer('sys.sys_ftp_config')->getAll()->toArray(),'url','id'));
+        $servers    =   array_column($this->getServer('sys.sys_ftp_config')->getAll()->toArray(),'url','id');
+        $this->viewData()->setVariable('servers',$servers);
         $this->viewData()->setVariable('ftp',$this->getServer('ftp'));
     }
     //获取文件列表

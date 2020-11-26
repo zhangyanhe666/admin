@@ -1,3 +1,13 @@
+<?php if(empty($servers)):?>
+<div class="col-xs-12">
+     <!-- PAGE CONTENT BEGINS -->
+   <div class="hr dotted"></div>
+   <div id="user-profile-1" class="user-profile row" >
+        <div class="space-12"></div>
+        无可用ftp服务
+        </div>                                               
+</div>
+<?php else:?>
 <script type="text/javascript" src="/assets/js/jquery-form.js"></script> 
 <script type="text/javascript" src="/assets/js/dmuploader.min.js"></script> 
 <table class="table" style="white-space:nowrap">
@@ -337,3 +347,4 @@ function getType(t){
     return $(t).parent().prev().children('div').children('span').attr('type');
 }
 </script>
+<?php endif;?>
