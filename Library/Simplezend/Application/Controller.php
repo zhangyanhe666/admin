@@ -25,7 +25,7 @@ class Controller{
             $method = 'notFound';
         }
         $response    = call_user_func(array($this,$method));
-        Common::setTimeAnchor('end');
+        Timer::setTimeAnchor('end');
         return is_object($response) ? $response : $this->defaultResponse();
     }
     public function setServerManager($serverManager){

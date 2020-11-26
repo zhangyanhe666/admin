@@ -7,7 +7,6 @@
 namespace Library\Application;
 use Library\ServiceManager\ServiceManager;
 use Library\ServiceManager\ServiceManagerConfig;
-use Library\Application\Common;
 class Application{
     /**
      * 入口文件类,需要做如下事情
@@ -28,7 +27,7 @@ class Application{
     //执行程序
     public  function run(){
         try {
-            Common::setTimeAnchor('start');
+            Timer::setTimeAnchor('start');
             $control    =   $this->serverManager->get('controller');
             $control->init();
             $control->onDispatch()->result();

@@ -413,20 +413,7 @@ class Common{
     public static function library($path){
         include realpath('./Library/'.trim($path));
     }
-    //计时器
-    public static function setTimeAnchor($k){
-        self::$timeAnchor[$k]   = microtime(TRUE);
-    }
-    public static function getTimeAnchor(){
-        $timeAnchor =   array();
-        foreach (self::$timeAnchor as $k=>$v){
-            $arr[]  =   $k;
-            foreach (self::$timeAnchor as $kk=>$vv){
-                !in_array($kk,$arr) && $timeAnchor[$k][$kk] =   round($vv-$v,3);
-            }
-        }
-        return $timeAnchor;
-    }
+
     public static function replace_tag($uri,$param,$tag){
         if(!empty($param)){
             $search         =   array_map(function($v) use($tag){

@@ -99,7 +99,7 @@ if ($page != $items->page->current): ?>
 
  <div style="margin-top:-20px;" class="alert" >
     <strong>运行时间：</strong>    <br/>
-    <?php foreach (Library\Application\Common::getTimeAnchor() as $k=>$v):?>
+    <?php foreach (Library\Application\Timer::getTimeAnchor() as $k=>$v):?>
     <?=$k?>:(
     <?php foreach ($v as $vk=>$vv):?>
     <?=$vk?>:<?=$vv?>
