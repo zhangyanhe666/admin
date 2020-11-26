@@ -10,8 +10,8 @@ namespace Library\Application;
 
 class Error{
     
-    public function setPhpError($status = false){
-        if (!$status) {            
+    public function openPhpError($status = false){
+        if ($status) {            
             error_reporting(E_ALL);
             ini_set('display_errors', 'On');
         } else {
@@ -20,7 +20,4 @@ class Error{
         }
     }
     
-    public function ErrorLog(){
-        
-    }
 }

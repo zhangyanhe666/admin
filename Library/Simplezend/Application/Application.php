@@ -21,13 +21,13 @@ class Application{
     }
     public static function init($config){
         $serverManager    =   new ServiceManager(new ServiceManagerConfig($config));
+        //开启php错误
+        $serverManager->get('error')->openPhpError(true);
         return $serverManager->get('Application');
     }
     //执行程序
     public  function run(){
         try {
-            //设置是否报错
-            $this->getServer('error')->setPhpError($this->getServer('config')->production);
             Common::setTimeAnchor('start');
             $control    =   $this->serverManager->get('controller');
             $control->init();
